@@ -1,49 +1,586 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculatrice</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#222">
+  <base target="_top">
+  <meta charset="utf-8">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#15140f">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" href="./icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#15140f;
+      --panel:#1c1b15;
+      --panel-2:#22211a;
+      --line:#34322a;
+      --bone:#eae6da;
+      --muted:#93907f;
+      --rust:#b23a2c;
+      --rust-dim:#6e2a22;
+      --amber:#c9a227;
+      --moss:#5f7a4c;
+      --moss-dim:#3d4f32;
+      --slate:#5c6b73;
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      background:var(--bg);
+      background-image:
+        radial-gradient(ellipse at 20% -10%, rgba(178,58,44,.10), transparent 45%),
+        radial-gradient(ellipse at 90% 0%, rgba(95,122,76,.08), transparent 40%);
+      color:var(--bone);
+      font-family:'Inter',system-ui,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+    }
+    .top{
+      position:sticky; top:0; z-index:20;
+      background:linear-gradient(180deg, rgba(21,20,15,.98), rgba(21,20,15,.90));
+      backdrop-filter:blur(6px);
+      border-bottom:1px solid var(--line);
+      padding:18px 20px 14px;
+    }
+    .brand{
+      display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .brand h1{
+      font-family:'Oswald',sans-serif;
+      font-weight:700;
+      font-size:22px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      margin:0;
+      color:var(--bone);
+    }
+    .brand h1 span{color:var(--rust);}
+    .brand small{
+      font-family:'JetBrains Mono',monospace;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.03em;
+    }
+    .meter-row{
+      display:flex; align-items:center; gap:12px; margin-top:12px;
+    }
+    .meter{
+      flex:1; height:10px; border-radius:2px;
+      background:repeating-linear-gradient(45deg, #26241b 0 6px, #211f17 6px 12px);
+      border:1px solid var(--line);
+      overflow:hidden;
+      position:relative;
+    }
+    .meter-fill{
+      height:100%;
+      background:linear-gradient(90deg, var(--moss-dim), var(--moss));
+      width:0%;
+      transition:width .4s ease;
+    }
+    .meter-label{
+      font-family:'JetBrains Mono',monospace;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .controls{
+      display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; align-items:center;
+    }
+    .chipset{display:flex; gap:6px; flex-wrap:wrap;}
+    .filter-chip{
+      font-family:'JetBrains Mono',monospace;
+      font-size:11px;
+      letter-spacing:.02em;
+      padding:6px 10px;
+      border-radius:3px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--muted);
+      cursor:pointer;
+      user-select:none;
+      transition:.15s;
+    }
+    .filter-chip:hover{border-color:var(--rust);}
+    .filter-chip.active{
+      background:var(--rust-dim);
+      border-color:var(--rust);
+      color:var(--bone);
+    }
+    .search{
+      margin-left:auto;
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:3px;
+      padding:6px 10px;
+      color:var(--bone);
+      font-family:'JetBrains Mono',monospace;
+      font-size:12px;
+      min-width:160px;
+    }
+    .search::placeholder{color:var(--muted);}
+    .desktop-only{display:inline-flex;}
+    @media (max-width:640px){
+      .desktop-only{display:none !important;}
+    }
+    .view-toggle{display:flex; gap:6px;}
+    .list{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:4px;
+      overflow:hidden;
+    }
+    .row{
+      display:flex; align-items:center; gap:10px;
+      padding:9px 14px;
+      border-bottom:1px solid var(--line);
+      cursor:pointer;
+      transition:background .12s;
+    }
+    .row:last-child{border-bottom:none;}
+    .row:hover{background:var(--panel-2);}
+    .row-check{
+      width:16px; height:16px; flex:0 0 16px;
+      border:1px solid var(--muted);
+      border-radius:2px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:10px; color:transparent;
+    }
+    .row.vu .row-check{
+      background:var(--moss-dim); border-color:var(--moss); color:var(--amber);
+    }
+    .row-code{
+      font-family:'JetBrains Mono',monospace;
+      font-size:13px; letter-spacing:.02em;
+      color:var(--bone);
+    }
+    .row.vu .row-code{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--moss);}
+    .row-n{
+      margin-left:auto;
+      font-family:'JetBrains Mono',monospace;
+      font-size:11px; color:var(--muted);
+    }
+    .row.hidden{display:none;}
+    main{padding:18px 20px 60px; max-width:980px; margin:0 auto;}
+    .group{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-left:3px solid var(--slate);
+      border-radius:4px;
+      margin-bottom:10px;
+      padding:12px 14px;
+    }
+    .group-head{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; margin-bottom:10px; flex-wrap:wrap;
+    }
+    .group-title{
+      font-family:'Oswald',sans-serif;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      font-size:14px;
+      color:var(--bone);
+    }
+    .group-title .n{color:var(--muted); font-weight:500; margin-left:6px; font-size:12px;}
+    .group-tools{display:flex; align-items:center; gap:10px;}
+    .group-count{
+      font-family:'JetBrains Mono',monospace;
+      font-size:11px;
+      color:var(--muted);
+    }
+    .bulk-btn{
+      font-family:'JetBrains Mono',monospace;
+      font-size:11px;
+      color:var(--muted);
+      background:transparent;
+      border:1px solid var(--line);
+      border-radius:3px;
+      padding:4px 8px;
+      cursor:pointer;
+      transition:.15s;
+    }
+    .bulk-btn:hover{border-color:var(--moss); color:var(--bone);}
+    .chips{display:flex; flex-wrap:wrap; gap:6px;}
+    .chip{
+      font-family:'JetBrains Mono',monospace;
+      font-size:12px;
+      font-weight:600;
+      padding:7px 9px;
+      border-radius:3px;
+      border:1px solid var(--line);
+      background:var(--panel-2);
+      color:var(--muted);
+      cursor:pointer;
+      position:relative;
+      transition:transform .1s, border-color .15s, background .15s, color .15s;
+    }
+    .chip:hover{border-color:var(--rust); color:var(--bone);}
+    .chip.vu{
+      background:var(--moss-dim);
+      border-color:var(--moss);
+      color:#dfe8d6;
+      transform:rotate(-1.5deg);
+    }
+    .chip.vu::after{
+      content:'✓';
+      margin-left:5px;
+      color:var(--amber);
+    }
+    .chip.hidden{display:none;}
+    .chip.current, .row.current{
+      box-shadow:0 0 0 2px var(--rust), 0 0 14px rgba(178,58,44,.55);
+      animation:pulse 1.8s ease-out 2;
+    }
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 2px var(--rust), 0 0 20px rgba(178,58,44,.8);}
+      100%{box-shadow:0 0 0 2px var(--rust), 0 0 6px rgba(178,58,44,.3);}
+    }
+    .group.hidden{display:none;}
+    .empty{
+      text-align:center; color:var(--muted);
+      font-family:'JetBrains Mono',monospace;
+      padding:60px 0; font-size:13px;
+    }
+    .toast{
+      position:fixed; bottom:18px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:var(--rust-dim); border:1px solid var(--rust); color:var(--bone);
+      font-family:'JetBrains Mono',monospace; font-size:12px;
+      padding:8px 14px; border-radius:4px; opacity:0; transition:.25s;
+      pointer-events:none;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  </style>
 </head>
 <body>
-  <h1>🧮 Calculatrice</h1>
-  <div class="calculator">
-    <input type="text" id="display" readonly>
-    <div class="buttons">
-      <button>(</button>
-      <button>)</button>
-      <button>C</button>
-      <button>/</button>
 
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-      <button>*</button>
-
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button>-</button>
-
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>+</button>
-
-      <button>0</button>
-      <button>.</button>
-      <button id="equal">=</button>
+  <div class="top">
+    <div class="brand">
+      <h1>Journal de <span>survie</span></h1>
+      <small id="subtitle">TWD UNIVERSE — SUIVI CHRONOLOGIQUE</small>
+    </div>
+    <div class="meter-row">
+      <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
+      <div class="meter-label" id="meterLabel">0 / 0 · 0%</div>
+      <button class="bulk-btn" id="continueBtn">▶ Continuer</button>
+    </div>
+    <div class="controls">
+      <div class="chipset" id="universeFilters"></div>
+      <div class="chipset">
+        <div class="filter-chip active" data-status="tous">TOUS</div>
+        <div class="filter-chip" data-status="voir">À VOIR</div>
+        <div class="filter-chip" data-status="vus">VUS</div>
+      </div>
+      <input class="search" id="search" placeholder="Chercher... S04, E07" />
+      <button class="bulk-btn desktop-only" id="viewToggleBtn">▤ Vue liste</button>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <main id="app">
+    <div class="empty">Chargement du journal...</div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
+    // === Accès aux données : natif (dans Apps Script) ou distant via JSONP (GitHub Pages) ===
+    // Colle ici l'URL de ton déploiement Apps Script (Déployer > Nouveau déploiement > Application Web)
+    // ex: https://script.google.com/macros/s/AKfycb..../exec
+    var APPS_SCRIPT_URL = 'COLLE_ICI_TON_URL_DEPLOYEE/exec';
+    var usingGAS = !!(typeof google !== 'undefined' && google.script && google.script.run);
+
+    function jsonp(url, cb){
+      var cbName = 'jsonp_cb_' + Math.random().toString(36).slice(2);
+      var s = document.createElement('script');
+      window[cbName] = function(data){
+        cb(data);
+        delete window[cbName];
+        s.remove();
+      };
+      s.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + cbName;
+      s.onerror = function(){ cb({ ok: false, error: 'Connexion impossible' }); delete window[cbName]; };
+      document.body.appendChild(s);
     }
+
+    function remoteGetEpisodes(cb){
+      if (usingGAS){
+        google.script.run.withSuccessHandler(cb).withFailureHandler(function(){ cb([]); }).getEpisodes();
+      } else {
+        jsonp(APPS_SCRIPT_URL + '?action=episodes', function(res){
+          cb(res && res.ok ? res.data : []);
+        });
+      }
+    }
+
+    function remoteSetVu(ordre, vu, cb){
+      if (usingGAS){
+        google.script.run.withSuccessHandler(cb).withFailureHandler(function(){ cb({ ok:false, error:'Connexion impossible' }); }).setVu(ordre, vu);
+      } else {
+        jsonp(APPS_SCRIPT_URL + '?action=setVu&ordre=' + ordre + '&vu=' + vu, cb);
+      }
+    }
+
+    function remoteSetRange(start, end, vu, cb){
+      if (usingGAS){
+        google.script.run.withSuccessHandler(cb).withFailureHandler(function(){ cb({ ok:false, error:'Connexion impossible' }); }).setRangeVu(start, end, vu);
+      } else {
+        jsonp(APPS_SCRIPT_URL + '?action=setRange&start=' + start + '&end=' + end + '&vu=' + vu, cb);
+      }
+    }
+
+    if ('serviceWorker' in navigator && !usingGAS) {
+      window.addEventListener('load', function(){
+        navigator.serviceWorker.register('./sw.js').catch(function(){});
+      });
+    }
+
+    var EPISODES = [];
+    var statusFilter = 'tous';
+    var universeFilter = 'tous';
+    var searchTerm = '';
+    var isMobile = window.matchMedia('(max-width:640px)').matches;
+    var viewMode = isMobile ? 'liste' : 'groupe';
+
+    var UNIVERSE_COLOR = {
+      'The Walking Dead': 'var(--rust)',
+      'Fear the Walking Dead': 'var(--amber)',
+      'The Walking Dead: World Beyond': 'var(--moss)',
+      'Tales of the Walking Dead': 'var(--slate)',
+      'The Walking Dead: The Ones Who Live': 'var(--rust)',
+      'The Walking Dead: Daryl Dixon': 'var(--amber)',
+      'The Walking Dead: Dead City': 'var(--moss)'
+    };
+
+    var UNIVERSE_SHORT = {
+      'The Walking Dead': 'TWD',
+      'Fear the Walking Dead': 'FTWD',
+      'The Walking Dead: World Beyond': 'WORLD BEYOND',
+      'Tales of the Walking Dead': 'TALES',
+      'The Walking Dead: The Ones Who Live': 'ONES WHO LIVE',
+      'The Walking Dead: Daryl Dixon': 'DARYL DIXON',
+      'The Walking Dead: Dead City': 'DEAD CITY'
+    };
+
+    function showToast(msg){
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function(){ t.classList.remove('show'); }, 1800);
+    }
+
+    function buildGroups(episodes){
+      var groups = [];
+      episodes.forEach(function(ep){
+        var last = groups[groups.length - 1];
+        if (last && last.univers === ep.univers && last.saison === ep.saison){
+          last.episodes.push(ep);
+        } else {
+          groups.push({ univers: ep.univers, saison: ep.saison, episodes: [ep] });
+        }
+      });
+      return groups;
+    }
+
+    function updateMeter(){
+      var total = EPISODES.length;
+      var vus = EPISODES.filter(function(e){ return e.vu; }).length;
+      var pct = total ? Math.round((vus / total) * 100) : 0;
+      document.getElementById('meterFill').style.width = pct + '%';
+      document.getElementById('meterLabel').textContent = vus + ' / ' + total + ' · ' + pct + '%';
+    }
+
+    function buildUniverseFilters(){
+      var el = document.getElementById('universeFilters');
+      var universes = ['tous'].concat(Object.keys(UNIVERSE_SHORT).filter(function(u){
+        return EPISODES.some(function(e){ return e.univers === u; });
+      }));
+      el.innerHTML = universes.map(function(u){
+        var label = u === 'tous' ? 'TOUS' : UNIVERSE_SHORT[u];
+        return '<div class="filter-chip' + (u === 'tous' ? ' active' : '') + '" data-univers="' + u + '">' + label + '</div>';
+      }).join('');
+      el.querySelectorAll('.filter-chip').forEach(function(chip){
+        chip.addEventListener('click', function(){
+          el.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+          chip.classList.add('active');
+          universeFilter = chip.getAttribute('data-univers');
+          render();
+        });
+      });
+    }
+
+    function matchesFilters(ep){
+      if (universeFilter !== 'tous' && ep.univers !== universeFilter) return false;
+      if (statusFilter === 'voir' && ep.vu) return false;
+      if (statusFilter === 'vus' && !ep.vu) return false;
+      if (searchTerm){
+        var hay = (ep.code + ' ' + ep.univers + ' S' + ep.saison + ' E' + ep.episode).toLowerCase();
+        if (hay.indexOf(searchTerm.toLowerCase()) === -1) return false;
+      }
+      return true;
+    }
+
+    function render(){
+      if (viewMode === 'liste') renderListView();
+      else renderGroupView();
+      attachEpisodeHandlers();
+      updateMeter();
+    }
+
+    function renderGroupView(){
+      var app = document.getElementById('app');
+      var groups = buildGroups(EPISODES);
+      var html = '';
+
+      groups.forEach(function(group){
+        var visible = group.episodes.filter(matchesFilters);
+        if (visible.length === 0) return;
+
+        var color = UNIVERSE_COLOR[group.univers] || 'var(--slate)';
+        var vusCount = group.episodes.filter(function(e){ return e.vu; }).length;
+        var ordreStart = group.episodes[0].ordre;
+        var ordreEnd = group.episodes[group.episodes.length - 1].ordre;
+        var allVu = vusCount === group.episodes.length;
+
+        html += '<div class="group" style="border-left-color:' + color + '">';
+        html += '  <div class="group-head">';
+        html += '    <div class="group-title">' + (UNIVERSE_SHORT[group.univers] || group.univers) +
+                '      <span class="n">SAISON ' + group.saison + '</span></div>';
+        html += '    <div class="group-tools">';
+        html += '      <span class="group-count">' + vusCount + '/' + group.episodes.length + '</span>';
+        html += '      <button class="bulk-btn" data-start="' + ordreStart + '" data-end="' + ordreEnd + '" data-value="' + (!allVu) + '">' +
+                (allVu ? 'Réinitialiser' : 'Tout marquer') + '</button>';
+        html += '    </div>';
+        html += '  </div>';
+        html += '  <div class="chips">';
+        group.episodes.forEach(function(ep){
+          var show = matchesFilters(ep);
+          html += '<div class="chip' + (ep.vu ? ' vu' : '') + (show ? '' : ' hidden') +
+                  '" data-ordre="' + ep.ordre + '" title="' + ep.code + '">E' +
+                  String(ep.episode).padStart(2, '0') + '</div>';
+        });
+        html += '  </div>';
+        html += '</div>';
+      });
+
+      app.innerHTML = html || '<div class="empty">Aucun épisode ne correspond à ce filtre.</div>';
+
+      app.querySelectorAll('.bulk-btn[data-start]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var start = Number(btn.getAttribute('data-start'));
+          var end = Number(btn.getAttribute('data-end'));
+          var value = btn.getAttribute('data-value') === 'true';
+          bulkSet(start, end, value);
+        });
+      });
+    }
+
+    function renderListView(){
+      var app = document.getElementById('app');
+      var visible = EPISODES.filter(matchesFilters);
+
+      if (visible.length === 0){
+        app.innerHTML = '<div class="empty">Aucun épisode ne correspond à ce filtre.</div>';
+        return;
+      }
+
+      var html = '<div class="list">';
+      visible.forEach(function(ep){
+        html += '<div class="row' + (ep.vu ? ' vu' : '') + '" data-ordre="' + ep.ordre + '">' +
+                '<div class="row-check">✓</div>' +
+                '<div class="row-code">' + ep.code + '</div>' +
+                '<div class="row-n">#' + ep.ordre + '</div>' +
+                '</div>';
+      });
+      html += '</div>';
+      app.innerHTML = html;
+    }
+
+    function attachEpisodeHandlers(){
+      document.querySelectorAll('[data-ordre]').forEach(function(el){
+        el.addEventListener('click', function(){
+          toggleEpisode(Number(el.getAttribute('data-ordre')));
+        });
+      });
+    }
+
+    function toggleEpisode(ordre){
+      var ep = EPISODES.find(function(e){ return e.ordre === ordre; });
+      if (!ep) return;
+      var next = !ep.vu;
+      ep.vu = next;
+      render();
+      remoteSetVu(ordre, next, function(res){
+        if (!res || !res.ok){ ep.vu = !next; render(); showToast('Erreur : ' + (res && res.error || 'inconnue')); }
+      });
+    }
+
+    function bulkSet(start, end, value){
+      EPISODES.forEach(function(ep){
+        if (ep.ordre >= start && ep.ordre <= end) ep.vu = value;
+      });
+      render();
+      remoteSetRange(start, end, value, function(res){
+        if (!res || !res.ok) showToast('Erreur : ' + (res && res.error || 'inconnue'));
+      });
+    }
+
+    document.querySelectorAll('[data-status]').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        document.querySelectorAll('[data-status]').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+        statusFilter = chip.getAttribute('data-status');
+        render();
+      });
+    });
+
+    document.getElementById('search').addEventListener('input', function(e){
+      searchTerm = e.target.value;
+      render();
+    });
+
+    function findCurrentOrdre(){
+      if (!EPISODES.length) return null;
+      var lastWatched = 0;
+      EPISODES.forEach(function(e){ if (e.vu && e.ordre > lastWatched) lastWatched = e.ordre; });
+      if (lastWatched === 0) return EPISODES[0].ordre;
+      var next = EPISODES.find(function(e){ return e.ordre === lastWatched + 1; });
+      return next ? next.ordre : lastWatched;
+    }
+
+    function scrollToCurrent(){
+      var ordre = findCurrentOrdre();
+      if (ordre == null) return;
+      var chip = document.querySelector('[data-ordre="' + ordre + '"]');
+      if (!chip){
+        // le filtre actif masque peut-être le bon groupe : on réinitialise les filtres
+        statusFilter = 'tous'; universeFilter = 'tous'; searchTerm = '';
+        document.getElementById('search').value = '';
+        document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+        document.querySelector('.filter-chip[data-status="tous"]').classList.add('active');
+        var tousUnivers = document.querySelector('.filter-chip[data-univers="tous"]');
+        if (tousUnivers) tousUnivers.classList.add('active');
+        render();
+        chip = document.querySelector('[data-ordre="' + ordre + '"]');
+      }
+      if (!chip) return;
+      chip.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      chip.classList.add('current');
+      setTimeout(function(){ chip.classList.remove('current'); }, 3600);
+    }
+
+    document.getElementById('continueBtn').addEventListener('click', scrollToCurrent);
+
+    document.getElementById('viewToggleBtn').addEventListener('click', function(){
+      viewMode = viewMode === 'liste' ? 'groupe' : 'liste';
+      this.textContent = viewMode === 'liste' ? '▦ Vue groupée' : '▤ Vue liste';
+      render();
+    });
+
+    remoteGetEpisodes(function(data){
+      EPISODES = data || [];
+      buildUniverseFilters();
+      render();
+      setTimeout(scrollToCurrent, 350);
+    });
   </script>
 </body>
 </html>
