@@ -1,20 +1,31 @@
 {
-  "name": "Calculatrice PWA",
-  "short_name": "Calculatrice",
-  "start_url": "index.html",
+  "name": "Journal de survie — TWD Universe",
+  "short_name": "Journal TWD",
+  "description": "Suivi chronologique des épisodes de l'univers The Walking Dead",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#222222",
+  "orientation": "portrait-primary",
+  "background_color": "#15140f",
+  "theme_color": "#15140f",
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
