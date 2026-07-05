@@ -3,7 +3,6 @@
 <head>
   <base target="_top">
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#15140f">
   <link rel="apple-touch-icon" href="./icon-192.png">
@@ -250,67 +249,6 @@
       pointer-events:none;
     }
     .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
-
-    /* ===== Mobile ===== */
-    @media (max-width:640px){
-      .top{padding:14px 14px 12px;}
-      .brand h1{font-size:19px;}
-      .brand small{font-size:10.5px;}
-      .meter-row{gap:10px; flex-wrap:wrap;}
-      .meter{flex:1 1 100%; order:1;}
-      .meter-label{order:2;}
-      #continueBtn{order:3; margin-left:auto;}
-      .meter{height:12px;}
-      .meter-label{font-size:12px;}
-      #continueBtn{padding:8px 12px; font-size:12px;}
-
-      .controls{gap:8px;}
-      .chipset{gap:6px;}
-      .filter-chip{
-        font-size:12.5px;
-        padding:9px 13px;
-        min-height:38px;
-        display:flex; align-items:center;
-      }
-      .search{
-        width:100%;
-        margin-left:0;
-        font-size:14px;
-        padding:11px 12px;
-        min-height:42px;
-      }
-
-      main{padding:14px 12px 70px;}
-
-      .group{padding:14px;}
-      .group-title{font-size:15px;}
-      .group-title .n{font-size:12.5px;}
-      .group-count{font-size:12px;}
-      .bulk-btn{
-        font-size:12px;
-        padding:7px 11px;
-        min-height:32px;
-      }
-
-      .chips{gap:8px;}
-      .chip{
-        font-size:14px;
-        padding:11px 13px;
-        min-width:52px;
-        text-align:center;
-      }
-
-      .row{padding:13px 14px; gap:12px;}
-      .row-check{width:20px; height:20px; font-size:13px;}
-      .row-code{font-size:15px;}
-      .row-n{font-size:12px;}
-
-      .toast{font-size:13px; padding:10px 16px; max-width:90%; text-align:center;}
-    }
-    @media (max-width:380px){
-      .brand h1{font-size:17px;}
-      .chip{min-width:46px; padding:10px 10px; font-size:13px;}
-    }
   </style>
 </head>
 <body>
@@ -347,7 +285,7 @@
     // === Accès aux données : natif (dans Apps Script) ou distant via JSONP (GitHub Pages) ===
     // Colle ici l'URL de ton déploiement Apps Script (Déployer > Nouveau déploiement > Application Web)
     // ex: https://script.google.com/macros/s/AKfycb..../exec
-    var APPS_SCRIPT_URL = 'COLLE_ICI_TON_URL_DEPLOYEE/exec';
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyj83OXLlan3tr04LNbl16BAyztHsiDlu9FufaFxlYWk8RNyFe7BqgrDPNayC9c-In4Gw/exec';
     var usingGAS = !!(typeof google !== 'undefined' && google.script && google.script.run);
 
     function jsonp(url, cb){
