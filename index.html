@@ -3,7 +3,7 @@
 <head>
   <base target="_top">
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#15140f">
   <link rel="apple-touch-icon" href="./icon-192.png">
@@ -37,6 +37,233 @@
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
     }
+    
+    /* === AMÉLIORATIONS MOBILE === */
+    @media (max-width: 768px) {
+      .top {
+        padding: 12px 12px 10px !important;
+      }
+      
+      .brand h1 {
+        font-size: 18px !important;
+      }
+      
+      .brand small {
+        font-size: 10px !important;
+      }
+      
+      .controls {
+        gap: 6px !important;
+        margin-top: 10px !important;
+      }
+      
+      .filter-chip {
+        font-size: 10px !important;
+        padding: 5px 8px !important;
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+      }
+      
+      .chip {
+        font-size: 11px !important;
+        padding: 6px 7px !important;
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+      }
+      
+      .chip.vu::after {
+        margin-left: 3px !important;
+        font-size: 10px;
+      }
+      
+      .search {
+        min-width: 120px !important;
+        font-size: 11px !important;
+        padding: 5px 8px !important;
+        width: 100% !important;
+        margin-top: 4px;
+      }
+      
+      .group {
+        padding: 10px 10px !important;
+        margin-bottom: 8px !important;
+      }
+      
+      .group-title {
+        font-size: 13px !important;
+      }
+      
+      .group-head {
+        margin-bottom: 8px !important;
+        flex-wrap: wrap;
+      }
+      
+      .group-tools {
+        gap: 6px !important;
+      }
+      
+      .group-count {
+        font-size: 10px !important;
+      }
+      
+      .bulk-btn {
+        font-size: 10px !important;
+        padding: 3px 6px !important;
+        min-height: 28px;
+        display: flex;
+        align-items: center;
+      }
+      
+      .meter-row {
+        gap: 8px !important;
+        margin-top: 8px !important;
+      }
+      
+      .meter {
+        height: 8px !important;
+      }
+      
+      .meter-label {
+        font-size: 10px !important;
+      }
+      
+      .row {
+        padding: 8px 10px !important;
+        gap: 8px !important;
+        min-height: 44px;
+      }
+      
+      .row-code {
+        font-size: 12px !important;
+      }
+      
+      .row-n {
+        font-size: 10px !important;
+      }
+      
+      .row-check {
+        width: 14px !important;
+        height: 14px !important;
+        flex: 0 0 14px !important;
+        font-size: 8px !important;
+      }
+      
+      main {
+        padding: 10px 10px 40px !important;
+      }
+      
+      .chips {
+        gap: 4px !important;
+      }
+      
+      .desktop-only {
+        display: none !important;
+      }
+      
+      .top .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .chipset {
+        gap: 4px !important;
+      }
+      
+      .view-toggle {
+        display: none !important;
+      }
+      
+      .brand {
+        gap: 8px !important;
+      }
+      
+      /* Mode liste mobile */
+      .list .row {
+        min-height: 48px;
+        padding: 10px 12px !important;
+      }
+      
+      /* Toast mobile */
+      .toast {
+        font-size: 11px !important;
+        padding: 6px 12px !important;
+        bottom: 12px !important;
+        max-width: 90%;
+      }
+      
+      /* Métrique plus compacte */
+      #meterLabel {
+        font-size: 10px !important;
+      }
+      
+      /* Bouton continuer plus petit */
+      #continueBtn {
+        font-size: 10px !important;
+        padding: 3px 8px !important;
+        min-height: 28px;
+      }
+    }
+
+    /* === AMÉLIORATIONS POUR TRÈS PETITS ÉCRANS === */
+    @media (max-width: 480px) {
+      .brand h1 {
+        font-size: 16px !important;
+      }
+      
+      .brand small {
+        font-size: 9px !important;
+      }
+      
+      .filter-chip {
+        font-size: 9px !important;
+        padding: 4px 6px !important;
+        min-height: 28px;
+      }
+      
+      .chip {
+        font-size: 10px !important;
+        padding: 5px 6px !important;
+        min-height: 32px;
+      }
+      
+      .group {
+        padding: 8px 8px !important;
+      }
+      
+      .group-title {
+        font-size: 12px !important;
+      }
+      
+      .row {
+        padding: 6px 8px !important;
+        min-height: 40px;
+      }
+      
+      .row-code {
+        font-size: 11px !important;
+      }
+      
+      main {
+        padding: 8px 8px 30px !important;
+      }
+      
+      .search {
+        font-size: 10px !important;
+        min-width: 100px !important;
+      }
+      
+      .meter-label {
+        font-size: 9px !important;
+      }
+      
+      .top {
+        padding: 10px 8px 8px !important;
+      }
+    }
+
+    /* Styles existants conservés */
     .top{
       position:sticky; top:0; z-index:20;
       background:linear-gradient(180deg, rgba(21,20,15,.98), rgba(21,20,15,.90));
@@ -121,7 +348,7 @@
     }
     .search::placeholder{color:var(--muted);}
     .desktop-only{display:inline-flex;}
-    @media (max-width:640px){
+    @media (max-width:1080px){
       .desktop-only{display:none !important;}
     }
     .view-toggle{display:flex; gap:6px;}
@@ -283,9 +510,6 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // === Accès aux données : natif (dans Apps Script) ou distant via JSONP (GitHub Pages) ===
-    // Colle ici l'URL de ton déploiement Apps Script (Déployer > Nouveau déploiement > Application Web)
-    // ex: https://script.google.com/macros/s/AKfycb..../exec
     var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyj83OXLlan3tr04LNbl16BAyztHsiDlu9FufaFxlYWk8RNyFe7BqgrDPNayC9c-In4Gw/exec';
     var usingGAS = !!(typeof google !== 'undefined' && google.script && google.script.run);
 
@@ -552,7 +776,6 @@
       if (ordre == null) return;
       var chip = document.querySelector('[data-ordre="' + ordre + '"]');
       if (!chip){
-        // le filtre actif masque peut-être le bon groupe : on réinitialise les filtres
         statusFilter = 'tous'; universeFilter = 'tous'; searchTerm = '';
         document.getElementById('search').value = '';
         document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
