@@ -109,13 +109,28 @@
     }
     .filter-chip:hover{filter:brightness(1.2);}
 
-    /* Chips SÉRIES (univers) → teinte ambre/or */
+    /* Chips SÉRIES (univers) → couleurs spécifiques comme les sigles */
     .filter-chip[data-univers]:hover{border-color:var(--amber);}
     .filter-chip[data-univers].active{
       background:var(--amber-dim);
       border-color:var(--amber);
       color:var(--bone);
     }
+    /* Couleurs individuelles pour chaque série */
+    .filter-chip[data-univers="The Walking Dead"]{color:var(--rust);}
+    .filter-chip[data-univers="The Walking Dead"].active{background:var(--rust-dim); border-color:var(--rust); color:var(--bone);}
+    .filter-chip[data-univers="Fear the Walking Dead"]{color:var(--amber);}
+    .filter-chip[data-univers="Fear the Walking Dead"].active{background:var(--amber-dim); border-color:var(--amber); color:var(--bone);}
+    .filter-chip[data-univers="The Walking Dead: World Beyond"]{color:var(--moss);}
+    .filter-chip[data-univers="The Walking Dead: World Beyond"].active{background:var(--moss-dim); border-color:var(--moss); color:var(--bone);}
+    .filter-chip[data-univers="Tales of the Walking Dead"]{color:var(--slate);}
+    .filter-chip[data-univers="Tales of the Walking Dead"].active{background:var(--slate); border-color:var(--slate); color:var(--bone);}
+    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"]{color:var(--rust);}
+    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"].active{background:var(--rust-dim); border-color:var(--rust); color:var(--bone);}
+    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"]{color:var(--amber);}
+    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"].active{background:var(--amber-dim); border-color:var(--amber); color:var(--bone);}
+    .filter-chip[data-univers="The Walking Dead: Dead City"]{color:var(--moss);}
+    .filter-chip[data-univers="The Walking Dead: Dead City"].active{background:var(--moss-dim); border-color:var(--moss); color:var(--bone);}
 
     /* Chips ÉPISODES (statut) → teinte rouille/rouge */
     .filter-chip[data-status]:hover{border-color:var(--rust);}
@@ -204,7 +219,6 @@
       justify-content:center;
       min-width:34px;
       line-height:1;
-      /* Largeur fixe pour uniformiser les boutons */
       width: 46px;
     }
     .row-btn i{font-size:14px;}
@@ -237,6 +251,27 @@
       pointer-events:none;
     }
     .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+    /* Sur PC : afficher le nom complet de la série avant le code */
+    @media (min-width: 769px){
+      .row-code::before{
+        content: attr(data-fullname) " ";
+        font-family:'Inter',system-ui,sans-serif;
+        font-weight:400;
+        font-size:11px;
+        color:var(--muted);
+        letter-spacing:.02em;
+      }
+      .row-code{
+        font-size:12px;
+      }
+      .row-serie{
+        display:none;
+      }
+      .row{
+        grid-template-columns: 1fr auto auto;
+      }
+    }
 
     @media (max-width:520px){
       .row{grid-template-columns: 70px 1fr auto auto; padding:9px 10px; gap:6px;}
@@ -347,6 +382,17 @@
       'The Walking Dead: Dead City': 'DEAD CITY'
     };
 
+    // Ordre d'affichage des séries dans les filtres
+    var UNIVERSE_ORDER = [
+      'The Walking Dead',
+      'Fear the Walking Dead',
+      'The Walking Dead: World Beyond',
+      'Tales of the Walking Dead',
+      'The Walking Dead: The Ones Who Live',
+      'The Walking Dead: Daryl Dixon',
+      'The Walking Dead: Dead City'
+    ];
+
     function showToast(msg){
       var t = document.getElementById('toast');
       t.textContent = msg;
@@ -364,7 +410,7 @@
 
     function buildUniverseFilters(){
       var el = document.getElementById('universeFilters');
-      var universes = ['tous'].concat(Object.keys(UNIVERSE_SHORT).filter(function(u){
+      var universes = ['tous'].concat(UNIVERSE_ORDER.filter(function(u){
         return EPISODES.some(function(e){ return e.univers === u; });
       }));
       el.innerHTML = universes.map(function(u){
@@ -412,9 +458,8 @@
       visible.forEach(function(ep){
         var color = UNIVERSE_COLOR[ep.univers] || 'var(--slate)';
         var isVu = !!ep.vu;
+        var fullName = ep.univers || '';
 
-        // On affiche toujours le bouton recherche, mais avec un contenu vide ou un style différent s'il est vu
-        // On le laisse en place pour garder l'alignement
         var searchBtn = '<button class="row-btn row-search-btn' + (isVu ? ' hidden-search' : '') + '" data-search-ordre="' + ep.ordre + '" title="Rechercher">' +
                           '<i class="bi bi-search"></i>' +
                         '</button>';
@@ -425,7 +470,7 @@
 
         html += '<div class="row' + (isVu ? ' vu' : '') + '" data-ordre="' + ep.ordre + '">' +
                   '<div class="row-serie" style="color:' + color + '">' + (UNIVERSE_SHORT[ep.univers] || ep.univers) + '</div>' +
-                  '<div class="row-code">' + ep.code + '</div>' +
+                  '<div class="row-code" data-fullname="' + fullName + '">' + ep.code + '</div>' +
                   searchBtn +
                   vuBtn +
                 '</div>';
@@ -433,8 +478,6 @@
       html += '</div>';
       app.innerHTML = html;
 
-      // Ajout d'un style pour cacher visuellement le bouton de recherche pour les épisodes vus,
-      // mais tout en conservant l'espace occupé
       var style = document.createElement('style');
       style.id = 'search-btn-hidden-style';
       if (!document.getElementById('search-btn-hidden-style')) {
