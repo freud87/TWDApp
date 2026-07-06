@@ -204,6 +204,8 @@
       justify-content:center;
       min-width:34px;
       line-height:1;
+      /* Largeur fixe pour uniformiser les boutons */
+      width: 46px;
     }
     .row-btn i{font-size:14px;}
     .row-search-btn:hover{border-color:var(--amber); color:var(--bone);}
@@ -238,7 +240,7 @@
 
     @media (max-width:520px){
       .row{grid-template-columns: 70px 1fr auto auto; padding:9px 10px; gap:6px;}
-      .row-btn{padding:5px 7px; font-size:12px; min-width:30px;}
+      .row-btn{padding:5px 7px; font-size:12px; min-width:30px; width: 40px;}
     }
   </style>
 </head>
@@ -411,13 +413,11 @@
         var color = UNIVERSE_COLOR[ep.univers] || 'var(--slate)';
         var isVu = !!ep.vu;
 
-        // Masquer le bouton recherche si l'épisode est vu
-        var searchBtn = '';
-        if (!isVu){
-          searchBtn = '<button class="row-btn row-search-btn" data-search-ordre="' + ep.ordre + '" title="Rechercher">' +
-                        '<i class="bi bi-search"></i>' +
-                      '</button>';
-        }
+        // On affiche toujours le bouton recherche, mais avec un contenu vide ou un style différent s'il est vu
+        // On le laisse en place pour garder l'alignement
+        var searchBtn = '<button class="row-btn row-search-btn' + (isVu ? ' hidden-search' : '') + '" data-search-ordre="' + ep.ordre + '" title="Rechercher">' +
+                          '<i class="bi bi-search"></i>' +
+                        '</button>';
 
         var vuBtn = '<button class="row-btn row-vu-btn' + (isVu ? ' vu' : '') + '" data-vu-ordre="' + ep.ordre + '" title="Marquer vu/non vu">' +
                       (isVu ? '<i class="bi bi-check-lg"></i>' : '<i class="bi bi-eye"></i>') +
@@ -432,6 +432,20 @@
       });
       html += '</div>';
       app.innerHTML = html;
+
+      // Ajout d'un style pour cacher visuellement le bouton de recherche pour les épisodes vus,
+      // mais tout en conservant l'espace occupé
+      var style = document.createElement('style');
+      style.id = 'search-btn-hidden-style';
+      if (!document.getElementById('search-btn-hidden-style')) {
+        style.textContent = `
+          .row-btn.hidden-search {
+            visibility: hidden;
+            pointer-events: none;
+          }
+        `;
+        document.head.appendChild(style);
+      }
 
       app.querySelectorAll('[data-search-ordre]').forEach(function(btn){
         btn.addEventListener('click', function(e){
