@@ -219,18 +219,25 @@
       color:var(--slate);
       overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
     }
-    .row-code{
-      font-family:'JetBrains Mono',monospace;
-      font-size:13px; letter-spacing:.02em;
-      color:var(--bone);
-      font-weight:600;
+    .row-code-wrapper{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      overflow:hidden;
     }
-    /* Sur PC : afficher le nom complet avant le code */
     .row-fullname{
       font-family:'Inter',sans-serif;
       font-size:12px;
       color:var(--muted);
-      margin-right:8px;
+      white-space:nowrap;
+    }
+    .row-code{
+      font-family:'JetBrains Mono',monospace;
+      font-size:13px;
+      letter-spacing:.02em;
+      color:var(--bone);
+      font-weight:600;
+      white-space:nowrap;
     }
     .row.vu .row-code{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--moss);}
     .row.vu .row-serie{color:var(--muted);}
@@ -285,9 +292,9 @@
     }
     .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
-    /* Mobile : afficher seulement le sigle */
+    /* Mobile : afficher seulement le sigle et le code */
     @media (max-width:768px){
-      .row{grid-template-columns: 70px 1fr auto auto; padding:9px 10px; gap:6px;}
+      .row{grid-template-columns: 60px 1fr auto auto; padding:9px 10px; gap:6px;}
       .row-btn{padding:5px 7px; font-size:12px; min-width:30px; width:40px;}
       .row-fullname{display:none;}
       .row-code{font-size:12px;}
@@ -295,8 +302,7 @@
 
     /* Desktop : afficher le nom complet */
     @media (min-width:769px){
-      .row-serie{width:80px; flex-shrink:0;}
-      .row-code-wrapper{display:flex; align-items:center; gap:6px;}
+      .row-serie{width:70px; flex-shrink:0;}
     }
   </style>
 </head>
@@ -479,10 +485,10 @@
                       (isVu ? '<i class="bi bi-check-lg"></i>' : '<i class="bi bi-eye"></i>') +
                     '</button>';
 
-        // Sur PC : afficher le nom complet avant le code
-        // Sur mobile : seulement le code (S01E01)
-        var codeDisplay = '<span class="row-code">' + ep.code + '</span>';
+        // Sur PC : afficher le nom complet + le code (S05E06)
+        // Sur mobile : seulement le code (S05E06)
         var fullNameDisplay = '<span class="row-fullname">' + ep.univers + '</span>';
+        var codeDisplay = '<span class="row-code">' + ep.code + '</span>';
 
         html += '<div class="row' + (isVu ? ' vu' : '') + '" data-ordre="' + ep.ordre + '">' +
                   '<div class="row-serie" style="color:' + color + '">' + (UNIVERSE_SHORT[ep.univers] || ep.univers) + '</div>' +
