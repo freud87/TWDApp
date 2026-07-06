@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#15140f">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" href="./icon-192.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
@@ -491,7 +491,7 @@
         var codeDisplay = '<span class="row-code">' + ep.code + '</span>';
 
         html += '<div class="row' + (isVu ? ' vu' : '') + '" data-ordre="' + ep.ordre + '">' +
-                  '<div class="row-serie" style="color:' + color + '">' + (UNIVERSE_SHORT[ep.univers] || ep.univers) + '</div>' +
+                  '<div class="row-serie" style="color:' + color + '">' + (ep.sigle || UNIVERSE_SHORT[ep.univers] || ep.univers) + '</div>' +
                   '<div class="row-code-wrapper">' + fullNameDisplay + codeDisplay + '</div>' +
                   searchBtn +
                   vuBtn +
