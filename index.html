@@ -37,8 +37,7 @@
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
     }
-    
-    /* Styles existants conservés */
+
     .top{
       position:sticky; top:0; z-index:20;
       background:linear-gradient(180deg, rgba(21,20,15,.98), rgba(21,20,15,.90));
@@ -122,75 +121,9 @@
       min-width:160px;
     }
     .search::placeholder{color:var(--muted);}
-    .desktop-only{display:inline-flex;}
-    @media (max-width:1080px){
-      .desktop-only{display:none !important;}
-    }
-    .view-toggle{display:flex; gap:6px;}
-    .list{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:4px;
-      overflow:hidden;
-    }
-    .row{
-      display:flex; align-items:center; gap:10px;
-      padding:9px 14px;
-      border-bottom:1px solid var(--line);
-      cursor:pointer;
-      transition:background .12s;
-    }
-    .row:last-child{border-bottom:none;}
-    .row:hover{background:var(--panel-2);}
-    .row-check{
-      width:16px; height:16px; flex:0 0 16px;
-      border:1px solid var(--muted);
-      border-radius:2px;
-      display:flex; align-items:center; justify-content:center;
-      font-size:10px; color:transparent;
-    }
-    .row.vu .row-check{
-      background:var(--moss-dim); border-color:var(--moss); color:var(--amber);
-    }
-    .row-code{
-      font-family:'JetBrains Mono',monospace;
-      font-size:13px; letter-spacing:.02em;
-      color:var(--bone);
-    }
-    .row.vu .row-code{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--moss);}
-    .row-n{
-      margin-left:auto;
-      font-family:'JetBrains Mono',monospace;
-      font-size:11px; color:var(--muted);
-    }
-    .row.hidden{display:none;}
+
     main{padding:18px 20px 60px; max-width:980px; margin:0 auto;}
-    .group{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-left:3px solid var(--slate);
-      border-radius:4px;
-      margin-bottom:10px;
-      padding:12px 14px;
-    }
-    .group-head{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px; margin-bottom:10px; flex-wrap:wrap;
-    }
-    .group-title{
-      font-family:'Oswald',sans-serif;
-      text-transform:uppercase;
-      letter-spacing:.04em;
-      font-size:14px;
-      color:var(--bone);
-    }
-    .group-title .n{color:var(--muted); font-weight:500; margin-left:6px; font-size:12px;}
-    .group-tools{display:flex; align-items:center; gap:10px;}
-    .group-count{
-      font-family:'JetBrains Mono',monospace;
-      font-size:11px;
-      color:var(--muted);
-    }
+
     .bulk-btn{
       font-family:'JetBrains Mono',monospace;
       font-size:11px;
@@ -203,42 +136,70 @@
       transition:.15s;
     }
     .bulk-btn:hover{border-color:var(--moss); color:var(--bone);}
-    .chips{display:flex; flex-wrap:wrap; gap:6px;}
-    .chip{
+
+    .list{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:4px;
+      overflow:hidden;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 90px 1fr auto auto;
+      align-items:center; gap:10px;
+      padding:10px 14px;
+      border-bottom:1px solid var(--line);
+      transition:background .12s;
+    }
+    .row:last-child{border-bottom:none;}
+    .row:hover{background:var(--panel-2);}
+    .row.hidden{display:none;}
+
+    .row-serie{
+      font-family:'Oswald',sans-serif;
+      font-size:11px;
+      font-weight:600;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      color:var(--slate);
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+    .row-code{
+      font-family:'JetBrains Mono',monospace;
+      font-size:13px; letter-spacing:.02em;
+      color:var(--bone);
+    }
+    .row.vu .row-code{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--moss);}
+    .row.vu .row-serie{color:var(--muted);}
+
+    .row-btn{
       font-family:'JetBrains Mono',monospace;
       font-size:12px;
-      font-weight:600;
-      padding:7px 9px;
+      padding:6px 9px;
       border-radius:3px;
       border:1px solid var(--line);
       background:var(--panel-2);
       color:var(--muted);
       cursor:pointer;
-      position:relative;
-      transition:transform .1s, border-color .15s, background .15s, color .15s;
+      white-space:nowrap;
+      transition:.15s;
     }
-    .chip:hover{border-color:var(--rust); color:var(--bone);}
-    .chip.vu{
+    .row-search-btn:hover{border-color:var(--amber); color:var(--bone);}
+    .row-vu-btn:hover{border-color:var(--rust); color:var(--bone);}
+    .row-vu-btn.vu{
       background:var(--moss-dim);
       border-color:var(--moss);
       color:#dfe8d6;
-      transform:rotate(-1.5deg);
     }
-    .chip.vu::after{
-      content:'✓';
-      margin-left:5px;
-      color:var(--amber);
-    }
-    .chip.hidden{display:none;}
-    .chip.current, .row.current{
-      box-shadow:0 0 0 2px var(--rust), 0 0 14px rgba(178,58,44,.55);
+    .row.current{
+      box-shadow:0 0 0 2px var(--rust) inset, 0 0 14px rgba(178,58,44,.55);
       animation:pulse 1.8s ease-out 2;
     }
     @keyframes pulse{
-      0%{box-shadow:0 0 0 2px var(--rust), 0 0 20px rgba(178,58,44,.8);}
-      100%{box-shadow:0 0 0 2px var(--rust), 0 0 6px rgba(178,58,44,.3);}
+      0%{box-shadow:0 0 0 2px var(--rust) inset, 0 0 20px rgba(178,58,44,.8);}
+      100%{box-shadow:0 0 0 2px var(--rust) inset, 0 0 6px rgba(178,58,44,.3);}
     }
-    .group.hidden{display:none;}
+
     .empty{
       text-align:center; color:var(--muted);
       font-family:'JetBrains Mono',monospace;
@@ -252,6 +213,11 @@
       pointer-events:none;
     }
     .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+    @media (max-width:520px){
+      .row{grid-template-columns: 60px 1fr auto auto; padding:9px 10px; gap:6px;}
+      .row-btn{padding:5px 7px; font-size:11px;}
+    }
   </style>
 </head>
 <body>
@@ -274,7 +240,6 @@
         <div class="filter-chip" data-status="vus">VUS</div>
       </div>
       <input class="search" id="search" placeholder="Chercher... S04, E07" />
-      <button class="bulk-btn desktop-only" id="viewToggleBtn">▤ Vue liste</button>
     </div>
   </div>
 
@@ -337,8 +302,6 @@
     var statusFilter = 'tous';
     var universeFilter = 'tous';
     var searchTerm = '';
-    var isMobile = window.matchMedia('(max-width:640px)').matches;
-    var viewMode = isMobile ? 'liste' : 'groupe';
 
     var UNIVERSE_COLOR = {
       'The Walking Dead': 'var(--rust)',
@@ -365,19 +328,6 @@
       t.textContent = msg;
       t.classList.add('show');
       setTimeout(function(){ t.classList.remove('show'); }, 1800);
-    }
-
-    function buildGroups(episodes){
-      var groups = [];
-      episodes.forEach(function(ep){
-        var last = groups[groups.length - 1];
-        if (last && last.univers === ep.univers && last.saison === ep.saison){
-          last.episodes.push(ep);
-        } else {
-          groups.push({ univers: ep.univers, saison: ep.saison, episodes: [ep] });
-        }
-      });
-      return groups;
     }
 
     function updateMeter(){
@@ -418,88 +368,54 @@
       return true;
     }
 
+    // Recherche générique (Google). Remplace toi-même par la plateforme légale de ton choix.
+    function searchUrlFor(ep){
+      var q = (ep.univers || '') + ' S' + String(ep.saison).padStart(2, '0') +
+              'E' + String(ep.episode).padStart(2, '0') + ' VOSTFR';
+      return 'https://www.google.com/search?q=' + encodeURIComponent(q);
+    }
+
     function render(){
-      if (viewMode === 'liste') renderListView();
-      else renderGroupView();
-      attachEpisodeHandlers();
-      updateMeter();
-    }
-
-    function renderGroupView(){
-      var app = document.getElementById('app');
-      var groups = buildGroups(EPISODES);
-      var html = '';
-
-      groups.forEach(function(group){
-        var visible = group.episodes.filter(matchesFilters);
-        if (visible.length === 0) return;
-
-        var color = UNIVERSE_COLOR[group.univers] || 'var(--slate)';
-        var vusCount = group.episodes.filter(function(e){ return e.vu; }).length;
-        var ordreStart = group.episodes[0].ordre;
-        var ordreEnd = group.episodes[group.episodes.length - 1].ordre;
-        var allVu = vusCount === group.episodes.length;
-
-        html += '<div class="group" style="border-left-color:' + color + '">';
-        html += '  <div class="group-head">';
-        html += '    <div class="group-title">' + (UNIVERSE_SHORT[group.univers] || group.univers) +
-                '      <span class="n">SAISON ' + group.saison + '</span></div>';
-        html += '    <div class="group-tools">';
-        html += '      <span class="group-count">' + vusCount + '/' + group.episodes.length + '</span>';
-        html += '      <button class="bulk-btn" data-start="' + ordreStart + '" data-end="' + ordreEnd + '" data-value="' + (!allVu) + '">' +
-                (allVu ? 'Réinitialiser' : 'Tout marquer') + '</button>';
-        html += '    </div>';
-        html += '  </div>';
-        html += '  <div class="chips">';
-        group.episodes.forEach(function(ep){
-          var show = matchesFilters(ep);
-          html += '<div class="chip' + (ep.vu ? ' vu' : '') + (show ? '' : ' hidden') +
-                  '" data-ordre="' + ep.ordre + '" title="' + ep.code + '">E' +
-                  String(ep.episode).padStart(2, '0') + '</div>';
-        });
-        html += '  </div>';
-        html += '</div>';
-      });
-
-      app.innerHTML = html || '<div class="empty">Aucun épisode ne correspond à ce filtre.</div>';
-
-      app.querySelectorAll('.bulk-btn[data-start]').forEach(function(btn){
-        btn.addEventListener('click', function(){
-          var start = Number(btn.getAttribute('data-start'));
-          var end = Number(btn.getAttribute('data-end'));
-          var value = btn.getAttribute('data-value') === 'true';
-          bulkSet(start, end, value);
-        });
-      });
-    }
-
-    function renderListView(){
       var app = document.getElementById('app');
       var visible = EPISODES.filter(matchesFilters);
 
       if (visible.length === 0){
         app.innerHTML = '<div class="empty">Aucun épisode ne correspond à ce filtre.</div>';
+        updateMeter();
         return;
       }
 
       var html = '<div class="list">';
       visible.forEach(function(ep){
+        var color = UNIVERSE_COLOR[ep.univers] || 'var(--slate)';
         html += '<div class="row' + (ep.vu ? ' vu' : '') + '" data-ordre="' + ep.ordre + '">' +
-                '<div class="row-check">✓</div>' +
-                '<div class="row-code">' + ep.code + '</div>' +
-                '<div class="row-n">#' + ep.ordre + '</div>' +
+                  '<div class="row-serie" style="color:' + color + '">' + (UNIVERSE_SHORT[ep.univers] || ep.univers) + '</div>' +
+                  '<div class="row-code">' + ep.code + '</div>' +
+                  '<button class="row-btn row-search-btn" data-search-ordre="' + ep.ordre + '" title="Rechercher">🔍</button>' +
+                  '<button class="row-btn row-vu-btn' + (ep.vu ? ' vu' : '') + '" data-vu-ordre="' + ep.ordre + '" title="Marquer vu/non vu">' +
+                    (ep.vu ? '✓ Vu' : 'Vu ?') +
+                  '</button>' +
                 '</div>';
       });
       html += '</div>';
       app.innerHTML = html;
-    }
 
-    function attachEpisodeHandlers(){
-      document.querySelectorAll('[data-ordre]').forEach(function(el){
-        el.addEventListener('click', function(){
-          toggleEpisode(Number(el.getAttribute('data-ordre')));
+      app.querySelectorAll('[data-search-ordre]').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var ep = EPISODES.find(function(e2){ return e2.ordre === Number(btn.getAttribute('data-search-ordre')); });
+          if (ep) window.open(searchUrlFor(ep), '_blank');
         });
       });
+
+      app.querySelectorAll('[data-vu-ordre]').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          toggleEpisode(Number(btn.getAttribute('data-vu-ordre')));
+        });
+      });
+
+      updateMeter();
     }
 
     function toggleEpisode(ordre){
@@ -510,16 +426,6 @@
       render();
       remoteSetVu(ordre, next, function(res){
         if (!res || !res.ok){ ep.vu = !next; render(); showToast('Erreur : ' + (res && res.error || 'inconnue')); }
-      });
-    }
-
-    function bulkSet(start, end, value){
-      EPISODES.forEach(function(ep){
-        if (ep.ordre >= start && ep.ordre <= end) ep.vu = value;
-      });
-      render();
-      remoteSetRange(start, end, value, function(res){
-        if (!res || !res.ok) showToast('Erreur : ' + (res && res.error || 'inconnue'));
       });
     }
 
@@ -549,8 +455,8 @@
     function scrollToCurrent(){
       var ordre = findCurrentOrdre();
       if (ordre == null) return;
-      var chip = document.querySelector('[data-ordre="' + ordre + '"]');
-      if (!chip){
+      var row = document.querySelector('.row[data-ordre="' + ordre + '"]');
+      if (!row){
         statusFilter = 'tous'; universeFilter = 'tous'; searchTerm = '';
         document.getElementById('search').value = '';
         document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
@@ -558,21 +464,15 @@
         var tousUnivers = document.querySelector('.filter-chip[data-univers="tous"]');
         if (tousUnivers) tousUnivers.classList.add('active');
         render();
-        chip = document.querySelector('[data-ordre="' + ordre + '"]');
+        row = document.querySelector('.row[data-ordre="' + ordre + '"]');
       }
-      if (!chip) return;
-      chip.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      chip.classList.add('current');
-      setTimeout(function(){ chip.classList.remove('current'); }, 3600);
+      if (!row) return;
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      row.classList.add('current');
+      setTimeout(function(){ row.classList.remove('current'); }, 3600);
     }
 
     document.getElementById('continueBtn').addEventListener('click', scrollToCurrent);
-
-    document.getElementById('viewToggleBtn').addEventListener('click', function(){
-      viewMode = viewMode === 'liste' ? 'groupe' : 'liste';
-      this.textContent = viewMode === 'liste' ? '▦ Vue groupée' : '▤ Vue liste';
-      render();
-    });
 
     remoteGetEpisodes(function(data){
       EPISODES = data || [];
