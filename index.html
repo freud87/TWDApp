@@ -100,69 +100,51 @@
       padding:6px 10px;
       border-radius:3px;
       border:1px solid var(--line);
-      background:var(--panel);
+      background:transparent;
       color:var(--muted);
       cursor:pointer;
       user-select:none;
       transition:.15s;
     }
-    .filter-chip:hover{filter:brightness(1.2);}
+    .filter-chip:hover{background:rgba(255,255,255,0.03);}
 
-    /* Couleurs des filtres par univers - appliquées au fond */
-    .filter-chip[data-univers="The Walking Dead"] {
-      background:var(--rust-dim);
-      border-color:var(--rust);
-      color:var(--bone);
-    }
-    .filter-chip[data-univers="Fear the Walking Dead"] {
-      background:var(--amber-dim);
-      border-color:var(--amber);
-      color:var(--bone);
-    }
-    .filter-chip[data-univers="The Walking Dead: World Beyond"] {
-      background:var(--moss-dim);
-      border-color:var(--moss);
-      color:var(--bone);
-    }
-    .filter-chip[data-univers="Tales of the Walking Dead"] {
-      background:var(--slate);
-      border-color:var(--slate);
-      color:var(--bone);
-    }
-    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"] {
-      background:var(--rust-dim);
-      border-color:var(--rust);
-      color:var(--bone);
-    }
-    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"] {
-      background:var(--amber-dim);
-      border-color:var(--amber);
-      color:var(--bone);
-    }
-    .filter-chip[data-univers="The Walking Dead: Dead City"] {
-      background:var(--moss-dim);
-      border-color:var(--moss);
-      color:var(--bone);
-    }
+    /* Boutons filtres d'univers (Bordures uniquement) */
+    .filter-chip[data-univers="The Walking Dead"] { border-color: var(--rust); color: var(--rust); }
+    .filter-chip[data-univers="The Walking Dead"]:hover { background: rgba(178,58,44,.1); }
+    .filter-chip[data-univers="The Walking Dead"].active { background: var(--rust-dim); color: var(--bone); }
 
-    /* Filtre "tous" reste neutre */
-    .filter-chip[data-univers="tous"] {
-      background:var(--panel);
-      border-color:var(--line);
-      color:var(--muted);
-    }
-    .filter-chip[data-univers="tous"].active {
-      background:var(--panel-2);
-      border-color:var(--bone);
-      color:var(--bone);
-    }
+    .filter-chip[data-univers="Fear the Walking Dead"] { border-color: var(--amber); color: var(--amber); }
+    .filter-chip[data-univers="Fear the Walking Dead"]:hover { background: rgba(201,162,39,.1); }
+    .filter-chip[data-univers="Fear the Walking Dead"].active { background: var(--amber-dim); color: var(--bone); }
 
-    .filter-chip[data-status]:hover{border-color:var(--rust);}
-    .filter-chip[data-status].active{
-      background:var(--rust-dim);
-      border-color:var(--rust);
-      color:var(--bone);
-    }
+    .filter-chip[data-univers="The Walking Dead: World Beyond"] { border-color: var(--moss); color: var(--moss); }
+    .filter-chip[data-univers="The Walking Dead: World Beyond"]:hover { background: rgba(95,122,76,.1); }
+    .filter-chip[data-univers="The Walking Dead: World Beyond"].active { background: var(--moss-dim); color: var(--bone); }
+
+    .filter-chip[data-univers="Tales of the Walking Dead"] { border-color: var(--slate); color: var(--slate); }
+    .filter-chip[data-univers="Tales of the Walking Dead"]:hover { background: rgba(92,107,115,.1); }
+    .filter-chip[data-univers="Tales of the Walking Dead"].active { background: var(--slate); color: var(--bone); }
+
+    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"] { border-color: var(--rust); color: var(--rust); }
+    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"]:hover { background: rgba(178,58,44,.1); }
+    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"].active { background: var(--rust-dim); color: var(--bone); }
+
+    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"] { border-color: var(--amber); color: var(--amber); }
+    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"]:hover { background: rgba(201,162,39,.1); }
+    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"].active { background: var(--amber-dim); color: var(--bone); }
+
+    .filter-chip[data-univers="The Walking Dead: Dead City"] { border-color: var(--moss); color: var(--moss); }
+    .filter-chip[data-univers="The Walking Dead: Dead City"]:hover { background: rgba(95,122,76,.1); }
+    .filter-chip[data-univers="The Walking Dead: Dead City"].active { background: var(--moss-dim); color: var(--bone); }
+
+    /* Filtre "tous" univers */
+    .filter-chip[data-univers="tous"] { border-color: var(--line); color: var(--muted); }
+    .filter-chip[data-univers="tous"].active { border-color: var(--bone); color: var(--bone); background: var(--panel-2); }
+
+    /* Filtres d'état (A voir / vus) */
+    .filter-chip[data-status] { border-color: var(--line); }
+    .filter-chip[data-status]:hover{ border-color: var(--rust); }
+    .filter-chip[data-status].active{ background: var(--rust-dim); border-color: var(--rust); color: var(--bone); }
 
     .search{
       margin-left:auto;
@@ -179,18 +161,23 @@
 
     main{padding:18px 20px 60px; max-width:980px; margin:0 auto;}
 
+    /* Bouton Prochain (Couleurs inversées par rapport à la page) */
     .bulk-btn{
       font-family:'JetBrains Mono',monospace;
       font-size:11px;
-      color:var(--muted);
-      background:transparent;
-      border:1px solid var(--line);
+      font-weight:600;
+      color:var(--bg);
+      background:var(--bone);
+      border:1px solid var(--bone);
       border-radius:3px;
-      padding:4px 8px;
+      padding:6px 10px;
       cursor:pointer;
       transition:.15s;
     }
-    .bulk-btn:hover{border-color:var(--moss); color:var(--bone);}
+    .bulk-btn:hover{
+      background:#d5d1c5;
+      border-color:#d5d1c5;
+    }
 
     .list{
       background:var(--panel);
@@ -200,7 +187,7 @@
     }
     .row{
       display:grid;
-      grid-template-columns: 80px 1fr auto auto;
+      grid-template-columns: 90px 1fr auto auto;
       align-items:center; gap:10px;
       padding:10px 14px;
       border-bottom:1px solid var(--line);
@@ -222,14 +209,14 @@
     .row-code-wrapper{
       display:flex;
       align-items:center;
-      gap:6px;
+      gap:8px;
       overflow:hidden;
     }
     .row-fullname{
       font-family:'Inter',sans-serif;
-      font-size:12px;
-      color:var(--muted);
-      white-space:nowrap;
+      font-size:13px;
+      color:var(--bone);
+      font-weight:600;
     }
     .row-code{
       font-family:'JetBrains Mono',monospace;
@@ -239,9 +226,14 @@
       font-weight:600;
       white-space:nowrap;
     }
-    .row.vu .row-code{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--moss);}
-    .row.vu .row-serie{color:var(--muted);}
-    .row.vu .row-fullname{color:var(--muted);}
+    .row-mobile-wrapper {
+      display: none;
+    }
+    
+    .row.vu .row-code, .row.vu .row-fullname, .row.vu .row-mobile-wrapper .row-code {
+      color:var(--muted) !important; text-decoration:line-through; text-decoration-color:var(--moss);
+    }
+    .row.vu .row-serie{color:var(--muted) !important;}
 
     .row-btn{
       font-family:'JetBrains Mono',monospace;
@@ -292,17 +284,25 @@
     }
     .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
-    /* Mobile : afficher seulement le sigle et le code */
+    /* Responsive Mobile */
     @media (max-width:768px){
-      .row{grid-template-columns: 60px 1fr auto auto; padding:9px 10px; gap:6px;}
+      .row{grid-template-columns: 55px 1fr auto auto; padding:9px 10px; gap:6px;}
       .row-btn{padding:5px 7px; font-size:12px; min-width:30px; width:40px;}
-      .row-fullname{display:none;}
-      .row-code{font-size:12px;}
+      .row-code-wrapper{display:none;}
+      .row-mobile-wrapper{
+        display:flex;
+        align-items:center;
+        font-family:'JetBrains Mono',monospace;
+        font-size:12px;
+        font-weight:600;
+        color:var(--bone);
+      }
+      .search{margin-left: 0; width: 100%;}
     }
 
-    /* Desktop : afficher le nom complet */
+    /* Desktop */
     @media (min-width:769px){
-      .row-serie{width:70px; flex-shrink:0;}
+      .row-serie{width:80px; flex-shrink:0;}
     }
   </style>
 </head>
@@ -316,7 +316,6 @@
     <div class="meter-row">
       <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
       <div class="meter-label" id="meterLabel">0 / 0 · 0%</div>
-      <button class="bulk-btn" id="continueBtn"><i class="bi bi-play-fill"></i> Continuer</button>
     </div>
     <div class="controls">
       <div class="chipset" id="universeFilters"></div>
@@ -325,6 +324,7 @@
         <div class="filter-chip" data-status="voir"><i class="bi bi-eye"></i> À VOIR</div>
         <div class="filter-chip" data-status="vus"><i class="bi bi-check2-all"></i> VUS</div>
       </div>
+      <button class="bulk-btn" id="continueBtn"><i class="bi bi-play-fill"></i> Prochain</button>
       <input class="search" id="search" placeholder="Chercher... S04, E07" />
     </div>
   </div>
@@ -367,14 +367,6 @@
         google.script.run.withSuccessHandler(cb).withFailureHandler(function(){ cb({ ok:false, error:'Connexion impossible' }); }).setVu(ordre, vu);
       } else {
         jsonp(APPS_SCRIPT_URL + '?action=setVu&ordre=' + ordre + '&vu=' + vu, cb);
-      }
-    }
-
-    function remoteSetRange(start, end, vu, cb){
-      if (usingGAS){
-        google.script.run.withSuccessHandler(cb).withFailureHandler(function(){ cb({ ok:false, error:'Connexion impossible' }); }).setRangeVu(start, end, vu);
-      } else {
-        jsonp(APPS_SCRIPT_URL + '?action=setRange&start=' + start + '&end=' + end + '&vu=' + vu, cb);
       }
     }
 
@@ -475,6 +467,7 @@
       var html = '<div class="list">';
       visible.forEach(function(ep){
         var color = UNIVERSE_COLOR[ep.univers] || 'var(--slate)';
+        var sigleText = ep.sigle || UNIVERSE_SHORT[ep.univers] || ep.univers;
         var isVu = !!ep.vu;
 
         var searchBtn = '<button class="row-btn row-search-btn' + (isVu ? ' hidden-search' : '') + '" data-search-ordre="' + ep.ordre + '" title="Rechercher">' +
@@ -485,14 +478,18 @@
                       (isVu ? '<i class="bi bi-check-lg"></i>' : '<i class="bi bi-eye"></i>') +
                     '</button>';
 
-        // Sur PC : afficher le nom complet + le code (S05E06)
-        // Sur mobile : seulement le code (S05E06)
-        var fullNameDisplay = '<span class="row-fullname">' + ep.univers + '</span>';
-        var codeDisplay = '<span class="row-code">' + ep.code + '</span>';
+        var pcDisplay = '<div class="row-code-wrapper">' +
+                          '<span class="row-fullname">' + ep.univers + ' ' + ep.code + '</span>' +
+                        '</div>';
+
+        var mobileDisplay = '<div class="row-mobile-wrapper">' +
+                              '<span class="row-code">' + sigleText + ' ' + ep.code + '</span>' +
+                            '</div>';
 
         html += '<div class="row' + (isVu ? ' vu' : '') + '" data-ordre="' + ep.ordre + '">' +
-                  '<div class="row-serie" style="color:' + color + '">' + (ep.sigle || UNIVERSE_SHORT[ep.univers] || ep.univers) + '</div>' +
-                  '<div class="row-code-wrapper">' + fullNameDisplay + codeDisplay + '</div>' +
+                  '<div class="row-serie" style="color:' + color + '">' + sigleText + '</div>' +
+                  pcDisplay +
+                  mobileDisplay +
                   searchBtn +
                   vuBtn +
                 '</div>';
