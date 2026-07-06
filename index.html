@@ -554,7 +554,7 @@
 
     if ('serviceWorker' in navigator && !usingGAS) {
       window.addEventListener('load', function(){
-        navigator.serviceWorker.register('./sw.js').catch(function(){});
+        navigator.serviceWorker.register('/TWDApp/sw.js').catch(function(){});
       });
     }
 
