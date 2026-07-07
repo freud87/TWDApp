@@ -6,10 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#15140f">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link class="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" href="./icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Chargement d'une seule police : Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     :root{
@@ -32,7 +33,6 @@
     
     body{
       background-color: var(--bg);
-      /* Image par défaut pour Ordinateur / Écrans larges */
       background-image: 
         linear-gradient(180deg, rgba(21, 20, 15, 0.7) 0%, rgba(21, 20, 15, 0.85) 100%),
         url('https://c4.wallpaperflare.com/wallpaper/694/760/18/tv-show-the-walking-dead-rick-grimes-wallpaper-preview.jpg');
@@ -53,15 +53,24 @@
       backdrop-filter:blur(8px);
       -webkit-backdrop-filter:blur(8px);
       border-bottom:1px solid var(--line);
-      padding:18px 20px 14px;
+      padding:14px 20px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .brand{
-      display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    .top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .top-actions {
+      display: flex;
+      gap: 8px;
     }
     .brand h1{
-      font-family:'Oswald',sans-serif;
       font-weight:700;
-      font-size:22px;
+      font-size:20px;
       letter-spacing:.06em;
       text-transform:uppercase;
       margin:0;
@@ -69,16 +78,21 @@
     }
     .brand h1 span{color:var(--rust);}
     .brand small{
-      font-family:'JetBrains Mono',monospace;
       color:var(--muted);
-      font-size:12px;
-      letter-spacing:.03em;
+      font-size:11px;
+      letter-spacing:.05em;
+      font-weight: 500;
     }
-    .meter-row{
-      display:flex; align-items:center; gap:12px; margin-top:12px;
+    
+    .meter-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
     }
     .meter{
-      flex:1; height:10px; border-radius:2px;
+      flex:1; height:8px; border-radius:2px;
       background:repeating-linear-gradient(45deg, rgba(38,36,27,0.4) 0 6px, rgba(33,31,23,0.4) 6px 12px);
       border:1px solid var(--line);
       overflow:hidden;
@@ -91,109 +105,120 @@
       transition:width .4s ease;
     }
     .meter-label{
-      font-family:'JetBrains Mono',monospace;
-      font-size:12px;
+      font-size:11px;
       color:var(--muted);
       white-space:nowrap;
+      font-weight: 500;
     }
-    .controls{
-      display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; align-items:center;
-    }
-    .chipset{display:flex; gap:6px; flex-wrap:wrap;}
 
-    .filter-chip{
-      font-family:'JetBrains Mono',monospace;
-      font-size:11px;
-      letter-spacing:.02em;
-      padding:6px 10px;
-      border-radius:3px;
-      border:1px solid var(--line);
-      background:rgba(21, 20, 15, 0.6);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      color:var(--muted);
-      cursor:pointer;
-      user-select:none;
-      transition:.15s;
-    }
-    .filter-chip:hover{background:rgba(255,255,255,0.05);}
-
-    /* Boutons filtres d'univers */
-    .filter-chip[data-univers="The Walking Dead"] { border-color: var(--rust); color: var(--rust); }
-    .filter-chip[data-univers="The Walking Dead"]:hover { background: rgba(178,58,44,.2); }
-    .filter-chip[data-univers="The Walking Dead"].active { background: var(--rust-dim); color: var(--bone); }
-
-    .filter-chip[data-univers="Fear the Walking Dead"] { border-color: var(--amber); color: var(--amber); }
-    .filter-chip[data-univers="Fear the Walking Dead"]:hover { background: rgba(201,162,39,.2); }
-    .filter-chip[data-univers="Fear the Walking Dead"].active { background: var(--amber-dim); color: var(--bone); }
-
-    .filter-chip[data-univers="The Walking Dead: World Beyond"] { border-color: var(--moss); color: var(--moss); }
-    .filter-chip[data-univers="The Walking Dead: World Beyond"]:hover { background: rgba(95,122,76,.2); }
-    .filter-chip[data-univers="The Walking Dead: World Beyond"].active { background: var(--moss-dim); color: var(--bone); }
-
-    .filter-chip[data-univers="Tales of the Walking Dead"] { border-color: var(--slate); color: var(--slate); }
-    .filter-chip[data-univers="Tales of the Walking Dead"]:hover { background: rgba(92,107,115,.2); }
-    .filter-chip[data-univers="Tales of the Walking Dead"].active { background: var(--slate); color: var(--bone); }
-
-    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"] { border-color: var(--rust); color: var(--rust); }
-    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"]:hover { background: rgba(178,58,44,.2); }
-    .filter-chip[data-univers="The Walking Dead: The Ones Who Live"].active { background: var(--rust-dim); color: var(--bone); }
-
-    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"] { border-color: var(--amber); color: var(--amber); }
-    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"]:hover { background: rgba(201,162,39,.2); }
-    .filter-chip[data-univers="The Walking Dead: Daryl Dixon"].active { background: var(--amber-dim); color: var(--bone); }
-
-    .filter-chip[data-univers="The Walking Dead: Dead City"] { border-color: var(--moss); color: var(--moss); }
-    .filter-chip[data-univers="The Walking Dead: Dead City"]:hover { background: rgba(95,122,76,.2); }
-    .filter-chip[data-univers="The Walking Dead: Dead City"].active { background: var(--moss-dim); color: var(--bone); }
-
-    .filter-chip[data-univers="tous"] { border-color: var(--line); color: var(--muted); }
-    .filter-chip[data-univers="tous"].active { border-color: var(--bone); color: var(--bone); background: var(--panel-2); }
-
-    .filter-chip[data-status] { border-color: var(--line); }
-    .filter-chip[data-status]:hover{ border-color: var(--rust); }
-    .filter-chip[data-status].active{ background: var(--rust-dim); border-color: var(--rust); color: var(--bone); }
-
-    .search{
-      margin-left:auto;
-      background:rgba(21, 20, 15, 0.7);
-      border:1px solid var(--line);
-      border-radius:3px;
-      padding:6px 10px;
-      color:var(--bone);
-      font-family:'JetBrains Mono',monospace;
-      font-size:12px;
-      min-width:160px;
-      backdrop-filter: blur(4px);
-    }
-    /*.search::placeholder{color:var(--muted);}*/
-
+    /* Layout Principal */
     main{
       flex: 1;
       width: 100%;
-      max-width: 980px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 14px 20px 24px;
+      padding: 20px;
       display: flex;
-      flex-direction: column;
+      gap: 20px;
       overflow: hidden; 
     }
 
+    /* Sidebar des Filtres */
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: rgba(21, 20, 15, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .filter-group-title {
+      font-size: 12px;
+      letter-spacing: .08em;
+      color: var(--muted);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .chipset-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .filter-chip {
+      font-size: 11px;
+      padding: 8px 10px;
+      border-radius: 3px;
+      border: 1px solid var(--line);
+      background: rgba(34, 33, 26, 0.3);
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      transition: .15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    .filter-chip:hover { background: rgba(255,255,255,0.05); color: var(--bone); }
+    .filter-chip.active {
+      background: var(--panel-2);
+      border-color: var(--bone);
+      color: var(--bone);
+    }
+
+    .filter-chip[data-univers].active { border-color: currentColor; background: rgba(255,255,255,0.08); }
+    .filter-chip[data-univers="tous"].active { border-color: var(--bone); }
+
     .bulk-btn{
-      font-family:'JetBrains Mono',monospace;
-      font-size:11px;
+      font-size:12px;
       font-weight:600;
       color:#15140f;
       background:var(--bone);
       border:1px solid var(--bone);
       border-radius:3px;
-      padding:6px 10px;
+      padding:8px 14px;
       cursor:pointer;
       transition:.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
-    .bulk-btn:hover{
-      background:#d5d1c5;
-      border-color:#d5d1c5;
+    .bulk-btn:hover{ background:#d5d1c5; border-color:#d5d1c5; }
+
+    /* Bouton filtres mobile */
+    #toggleFilterBtn {
+      display: none;
+      background: rgba(34, 33, 26, 0.6);
+      border: 1px solid var(--line);
+      color: var(--bone);
+    }
+    #toggleFilterBtn:hover { background: var(--panel-2); }
+
+    /* Zone de liste */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     .list{
@@ -203,88 +228,54 @@
       overflow-y:auto; 
       flex: 1;
       scrollbar-width: none; 
-      -ms-overflow-style: none; 
     }
-    .list::-webkit-scrollbar {
-      display: none;
-    }
+    .list::-webkit-scrollbar { display: none; }
 
     .row{
       display:grid;
-      grid-template-columns: 90px 1fr auto auto;
-      align-items:center; gap:10px;
-      padding:10px 14px;
+      grid-template-columns: 80px 1fr auto auto;
+      align-items:center; gap:12px;
+      padding:11px 14px;
       border-bottom:1px solid var(--line);
       transition:background .12s;
     }
     .row:last-child{border-bottom:none;}
     .row:hover{background:var(--panel-2);}
-    .row.hidden{display:none;}
 
     .row-serie{
-      font-family:'Oswald',sans-serif;
       font-size:11px;
-      font-weight:600;
+      font-weight:700;
       letter-spacing:.04em;
       text-transform:uppercase;
       color:var(--slate);
       overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
     }
     .row-code-wrapper{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      overflow:hidden;
+      display:flex; align-items:center; gap:8px; overflow:hidden;
     }
     .row-fullname{
-      font-family:'Inter',sans-serif;
-      font-size:13px;
-      color:var(--bone);
-      font-weight:600;
+      font-size:13px; color:var(--bone); font-weight:600;
     }
     .row-code{
-      font-family:'JetBrains Mono',monospace;
-      font-size:13px;
-      letter-spacing:.02em;
-      color:var(--bone);
-      font-weight:600;
-      white-space:nowrap;
+      font-size:13px; letter-spacing:.02em; color:var(--bone); font-weight:600; white-space:nowrap;
     }
-    .row-mobile-wrapper {
-      display: none;
-    }
+    .row-mobile-wrapper { display: none; }
     
     .row.vu .row-code, .row.vu .row-fullname, .row.vu .row-mobile-wrapper .row-code {
       color:var(--muted) !important; text-decoration:line-through; text-decoration-color:var(--moss);
     }
-    .row.vu .row-serie{color:var(--muted) !important;}
+    .row.vu .row-serie { color:var(--muted) !important; border-color: transparent; }
 
     .row-btn{
-      font-family:'JetBrains Mono',monospace;
-      font-size:13px;
-      padding:6px 9px;
-      border-radius:3px;
-      border:1px solid var(--line);
-      background:rgba(34, 33, 26, 0.4);
-      color:var(--muted);
-      cursor:pointer;
-      white-space:nowrap;
-      transition:.15s;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:34px;
-      line-height:1;
-      width:46px;
+      font-size:13px; padding:6px 9px;
+      border-radius:3px; border:1px solid var(--line); background:rgba(34, 33, 26, 0.4);
+      color:var(--muted); cursor:pointer; white-space:nowrap; transition:.15s;
+      display:inline-flex; align-items:center; justify-content:center; width:46px;
     }
-    .row-btn i{font-size:14px;}
     .row-search-btn:hover{border-color:var(--amber); color:var(--bone);}
     .row-vu-btn:hover{border-color:var(--rust); color:var(--bone);}
-    .row-vu-btn.vu{
-      background:var(--moss-dim);
-      border-color:var(--moss);
-      color:#dfe8d6;
-    }
+    .row-vu-btn.vu{ background:var(--moss-dim); border-color:var(--moss); color:#dfe8d6; }
+    
     .row.current{
       box-shadow:0 0 0 2px var(--rust) inset, 0 0 14px rgba(178,58,44,.55);
       animation:pulse 1.8s ease-out 2;
@@ -295,72 +286,103 @@
     }
 
     .empty{
-      text-align:center; color:var(--muted);
-      font-family:'JetBrains Mono',monospace;
-      padding:60px 0; font-size:13px;
+      text-align:center; color:var(--muted); padding:60px 0; font-size:13px; font-weight: 500;
     }
     .toast{
       position:fixed; bottom:18px; left:50%; transform:translateX(-50%) translateY(20px);
       background:var(--rust-dim); border:1px solid var(--rust); color:var(--bone);
-      font-family:'JetBrains Mono',monospace; font-size:12px;
-      padding:8px 14px; border-radius:4px; opacity:0; transition:.25s;
-      pointer-events:none;
+      font-size:12px; padding:8px 14px; border-radius:4px; opacity:0; transition:.25s; pointer-events:none; z-index: 1000;
+      font-weight: 500;
     }
     .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
-    /* Responsive Mobile */
-    @media (max-width:768px){
+    /* Responsive Mobile Layout */
+    @media (max-width:900px){
       body {
-        /* Image alternative verticale pour Mobile */
         background-image: 
           linear-gradient(180deg, rgba(21, 20, 15, 0.72) 0%, rgba(21, 20, 15, 0.88) 100%),
           url('https://w0.peakpx.com/wallpaper/289/542/HD-wallpaper-walking-dead-fav.jpg');
       }
-      .row{grid-template-columns: 55px 1fr auto auto; padding:9px 10px; gap:6px;}
-      .row-btn{padding:5px 7px; font-size:12px; min-width:30px; width:40px;}
-      .row-code-wrapper{display:none;}
-      .row-mobile-wrapper{
-        display:flex;
-        align-items:center;
-        font-family:'JetBrains Mono',monospace;
-        font-size:12px;
-        font-weight:600;
-        color:var(--bone);
+      #toggleFilterBtn { display: inline-flex; }
+      .top-header { flex-direction: row; justify-content: space-between; }
+      main { flex-direction: column; padding: 10px; gap: 10px; position: relative; }
+      
+      .sidebar { 
+        display: none; 
+        width: 100%; 
+        max-height: 300px; 
+        gap: 12px; 
+        position: absolute;
+        top: 10px; left: 0; right: 0;
+        z-index: 99;
+        background: rgba(21, 20, 15, 0.95);
+        border-color: var(--bone);
       }
-      /*.search{margin-left: 0; width: 100%;}*/
-    }
+      .sidebar.open { display: flex; }
 
-    /* Desktop */
-    @media (min-width:769px){
-      .row-serie{width:80px; flex-shrink:0;}
+      .chipset-vertical { flex-direction: row; flex-wrap: wrap; }
+      .row { grid-template-columns: 60px 1fr auto auto; padding:9px 10px; gap:6px; }
+      .row-code-wrapper { display: none; }
+      .row-mobile-wrapper {
+        display: flex; flex-direction: column; font-size: 12px; font-weight: 600;
+      }
+      .row-btn { width: 40px; }
     }
   </style>
 </head>
 <body>
 
   <div class="top">
-    <div class="brand">
-      <h1>Journal de <span>survie</span></h1>
-      <small id="subtitle">TWD UNIVERSE — SUIVI CHRONOLOGIQUE</small>
+    <div class="top-header">
+      <div class="brand">
+        <h1>Journal de <span>survie</span></h1>
+        <small id="subtitle">TWD UNIVERSE — SUIVI CHRONOLOGIQUE</small>
+      </div>
+      <div class="top-actions">
+        <button class="bulk-btn" id="toggleFilterBtn" title="Filtrer"><i class="bi bi-sliders"></i></button>
+        <button class="bulk-btn" id="continueBtn"><i class="bi bi-play-fill"></i> Prochain</button>
+      </div>
     </div>
-    <div class="meter-row">
+    <div class="meter-container">
       <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
       <div class="meter-label" id="meterLabel">0 / 0 · 0%</div>
     </div>
-    <div class="controls">
-      <div class="chipset" id="universeFilters"></div>
-      <div class="chipset">
-        <div class="filter-chip active" data-status="tous"><i class="bi bi-collection"></i> TOUS</div>
-        <div class="filter-chip" data-status="voir"><i class="bi bi-eye"></i> À VOIR</div>
-        <div class="filter-chip" data-status="vus"><i class="bi bi-check2-all"></i> VUS</div>
-      </div>
-      <button class="bulk-btn" id="continueBtn"><i class="bi bi-play-fill"></i> Prochain</button>
-      <!--<input class="search" id="search" placeholder="Chercher... S04, E07" />-->
-    </div>
   </div>
 
-  <main id="app">
-    <div class="empty">Chargement du journal...</div>
+  <main>
+    <div class="sidebar" id="sidebar">
+      
+      <!-- FILTRE 1 : PROGRES -->
+      <div class="filter-group">
+        <div class="filter-group-title">Progression</div>
+        <div class="chipset-vertical">
+          <div class="filter-chip active" data-status="tous"><i class="bi bi-collection"></i> Tous</div>
+          <div class="filter-chip" data-status="voir"><i class="bi bi-eye"></i> À voir</div>
+          <div class="filter-chip" data-status="vus"><i class="bi bi-check2-all"></i> Vus</div>
+        </div>
+      </div>
+
+      <!-- FILTRE 2 : GENRE -->
+      <div class="filter-group">
+        <div class="filter-group-title">Genre</div>
+        <div class="chipset-vertical" id="genreFilters">
+          <div class="filter-chip active" data-genre="tous"><i class="bi bi-tag"></i> Tous</div>
+          <div class="filter-chip" data-genre="TVS"><i class="bi bi-tv"></i> TVS</div>
+          <div class="filter-chip" data-genre="WBS"><i class="bi bi-globe"></i> WBS</div>
+        </div>
+      </div>
+
+      <!-- FILTRE 3 : SÉRIE -->
+      <div class="filter-group">
+        <div class="filter-group-title">Séries</div>
+        <div class="chipset-vertical" id="universeFilters"></div>
+      </div>
+
+    </div>
+
+    <div class="content-area" id="app">
+      <div class="empty">Chargement du journal...</div>
+    </div>
   </main>
 
   <div class="toast" id="toast"></div>
@@ -372,11 +394,7 @@
     function jsonp(url, cb){
       var cbName = 'jsonp_cb_' + Math.random().toString(36).slice(2);
       var s = document.createElement('script');
-      window[cbName] = function(data){
-        cb(data);
-        delete window[cbName];
-        s.remove();
-      };
+      window[cbName] = function(data){ cb(data); delete window[cbName]; s.remove(); };
       s.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + cbName;
       s.onerror = function(){ cb({ ok: false, error: 'Connexion impossible' }); delete window[cbName]; };
       document.body.appendChild(s);
@@ -386,55 +404,37 @@
       if (usingGAS){
         google.script.run.withSuccessHandler(cb).withFailureHandler(function(){ cb([]); }).getEpisodes();
       } else {
-        jsonp(APPS_SCRIPT_URL + '?action=episodes', function(res){
-          cb(res && res.ok ? res.data : []);
-        });
+        jsonp(APPS_SCRIPT_URL + '?action=episodes', function(res){ cb(res && res.ok ? res.data : []); });
       }
-    }
-
-    function remoteSetVu(ordre, vu, cb){
-      if (usingGAS){
-        google.script.run.withSuccessHandler(cb).withFailureHandler(function(){ cb({ ok:false, error:'Connexion impossible' }); }).setVu(ordre, vu);
-      } else {
-        jsonp(APPS_SCRIPT_URL + '?action=setVu&ordre=' + ordre + '&vu=' + vu, cb);
-      }
-    }
-
-    if ('serviceWorker' in navigator && !usingGAS) {
-      window.addEventListener('load', function(){
-        navigator.serviceWorker.register('/TWDApp/sw.js').catch(function(){});
-      });
     }
 
     var EPISODES = [];
     var statusFilter = 'tous';
     var universeFilter = 'tous';
-    var searchTerm = '';
+    var genreFilter = 'tous';
 
-    var UNIVERSE_COLOR = {
-      'The Walking Dead': 'var(--rust)',
-      'Fear the Walking Dead': 'var(--amber)',
-      'The Walking Dead: World Beyond': 'var(--moss)',
-      'Tales of the Walking Dead': 'var(--slate)',
-      'The Walking Dead: The Ones Who Live': 'var(--rust)',
-      'The Walking Dead: Daryl Dixon': 'var(--amber)',
-      'The Walking Dead: Dead City': 'var(--moss)'
-    };
+    var PALETTE = [
+      '#b23a2c', '#c9a227', '#5f7a4c', '#4c7a78', 
+      '#3f51b5', '#8e44ad', '#d35400', '#7f8c8d'
+    ];
 
-    var UNIVERSE_SHORT = {
-      'The Walking Dead': 'TWD',
-      'Fear the Walking Dead': 'FTWD',
-      'The Walking Dead: World Beyond': 'WORLD BEYOND',
-      'Tales of the Walking Dead': 'TALES',
-      'The Walking Dead: The Ones Who Live': 'ONES WHO LIVE',
-      'The Walking Dead: Daryl Dixon': 'DARYL DIXON',
-      'The Walking Dead: Dead City': 'DEAD CITY'
-    };
+    var UNIVERSE_COLOR = {};
+    var UNIVERSE_SHORT = {};
+
+    function generateShortName(fullName, defaultSigle) {
+      if (defaultSigle) return defaultSigle.toUpperCase();
+      if (fullName.includes(':')) {
+        var parts = fullName.split(':');
+        var main = parts[0].replace('The Walking Dead', 'TWD').trim();
+        var sub = parts[1].trim().toUpperCase();
+        return main + ' — ' + sub;
+      }
+      return fullName.replace('The Walking Dead', 'TWD').toUpperCase();
+    }
 
     function showToast(msg){
       var t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
+      t.textContent = msg; t.classList.add('show');
       setTimeout(function(){ t.classList.remove('show'); }, 1800);
     }
 
@@ -448,52 +448,87 @@
 
     function buildUniverseFilters(){
       var el = document.getElementById('universeFilters');
-      var universes = ['tous'].concat(Object.keys(UNIVERSE_SHORT).filter(function(u){
-        return EPISODES.some(function(e){ return e.univers === u; });
-      }));
-      el.innerHTML = universes.map(function(u){
+      var uniqueUniverses = [];
+      var universeToSigle = {};
+
+      EPISODES.forEach(function(e) {
+        if(e.univers && !uniqueUniverses.includes(e.univers)) {
+          uniqueUniverses.push(e.univers);
+          universeToSigle[e.univers] = e.sigle || '';
+        }
+      });
+
+      uniqueUniverses.forEach(function(u, idx) {
+        UNIVERSE_COLOR[u] = PALETTE[idx % PALETTE.length];
+        UNIVERSE_SHORT[u] = generateShortName(u, universeToSigle[u]);
+      });
+
+      var list = ['tous'].concat(uniqueUniverses);
+      
+      el.innerHTML = list.map(function(u){
         var label = u === 'tous' ? '<i class="bi bi-grid-3x3-gap"></i> TOUS' : UNIVERSE_SHORT[u];
         var activeClass = (u === 'tous' && universeFilter === 'tous') ? ' active' : '';
         var activeClass2 = (u === universeFilter && u !== 'tous') ? ' active' : '';
-        return '<div class="filter-chip' + activeClass + activeClass2 + '" data-univers="' + u + '">' + label + '</div>';
+        var colorStyle = u !== 'tous' ? 'style="color:' + UNIVERSE_COLOR[u] + '"' : '';
+        return '<div class="filter-chip' + activeClass + activeClass2 + '" data-univers="' + u + '" ' + colorStyle + '>' + label + '</div>';
       }).join('');
+
       el.querySelectorAll('.filter-chip').forEach(function(chip){
         chip.addEventListener('click', function(){
           el.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
           chip.classList.add('active');
           universeFilter = chip.getAttribute('data-univers');
           render();
+          document.getElementById('sidebar').classList.remove('open');
         });
       });
     }
+
+    document.getElementById('toggleFilterBtn').addEventListener('click', function(){
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.querySelectorAll('[data-genre]').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        document.querySelectorAll('[data-genre]').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+        genreFilter = chip.getAttribute('data-genre');
+        render();
+        document.getElementById('sidebar').classList.remove('open');
+      });
+    });
+
+    document.querySelectorAll('[data-status]').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        document.querySelectorAll('[data-status]').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+        statusFilter = chip.getAttribute('data-status');
+        render();
+        document.getElementById('sidebar').classList.remove('open');
+      });
+    });
 
     function matchesFilters(ep){
       if (universeFilter !== 'tous' && ep.univers !== universeFilter) return false;
       if (statusFilter === 'voir' && ep.vu) return false;
       if (statusFilter === 'vus' && !ep.vu) return false;
-      if (searchTerm){
-        var hay = (ep.code + ' ' + ep.univers + ' S' + ep.saison + ' E' + ep.episode).toLowerCase();
-        if (hay.indexOf(searchTerm.toLowerCase()) === -1) return false;
-      }
+      if (genreFilter !== 'tous' && ep.genre !== genreFilter) return false;
       return true;
     }
 
     function searchUrlFor(ep){
-      var q = (ep.univers || '') + ' S' + String(ep.saison).padStart(2, '0') +
-              'E' + String(ep.episode).padStart(2, '0') + ' Egydead';
+      var q = ep.univers + ' ' + ep.code + ' Egydead';
       return 'https://www.google.com/search?q=' + encodeURIComponent(q);
     }
 
     function render(){
       var app = document.getElementById('app');
       var visible = EPISODES.filter(matchesFilters);
-
-      // On sauvegarde l'emplacement du scroll actuel avant la reconstruction
       var previousContainer = document.querySelector('.list');
       var savedScrollTop = previousContainer ? previousContainer.scrollTop : 0;
 
       if (visible.length === 0){
-        app.innerHTML = '<div class="empty">Aucun épisode ne correspond à ce filtre.</div>';
+        app.innerHTML = '<div class="empty">Aucun épisode ne correspond à vos filtres.</div>';
         updateMeter();
         return;
       }
@@ -513,7 +548,7 @@
                     '</button>';
 
         var pcDisplay = '<div class="row-code-wrapper">' +
-                          '<span class="row-fullname">' + ep.univers + ' ' + ep.code + '</span>' +
+                          '<span class="row-fullname">' + ep.univers + ' · <span>' + ep.code + '</span></span>' +
                         '</div>';
 
         var mobileDisplay = '<div class="row-mobile-wrapper">' +
@@ -531,15 +566,10 @@
       html += '</div>';
       app.innerHTML = html;
 
-      var style = document.createElement('style');
-      style.id = 'search-btn-hidden-style';
       if (!document.getElementById('search-btn-hidden-style')) {
-        style.textContent = `
-          .row-btn.hidden-search {
-            visibility: hidden;
-            pointer-events: none;
-          }
-        `;
+        var style = document.createElement('style');
+        style.id = 'search-btn-hidden-style';
+        style.textContent = `.row-btn.hidden-search { visibility: hidden; pointer-events: none; }`;
         document.head.appendChild(style);
       }
 
@@ -558,12 +588,8 @@
         });
       });
 
-      // On réapplique immédiatement la position du scroll sauvegardée
       var newContainer = document.querySelector('.list');
-      if (newContainer) {
-        newContainer.scrollTop = savedScrollTop;
-      }
-
+      if (newContainer) { newContainer.scrollTop = savedScrollTop; }
       updateMeter();
     }
 
@@ -573,24 +599,16 @@
       var next = !ep.vu;
       ep.vu = next;
       render();
-      remoteSetVu(ordre, next, function(res){
-        if (!res || !res.ok){ ep.vu = !next; render(); showToast('Erreur : ' + (res && res.error || 'inconnue')); }
-      });
+      if (usingGAS){
+        google.script.run.withSuccessHandler(function(res){
+          if (!res || !res.ok){ ep.vu = !next; render(); showToast('Erreur serveur'); }
+        }).withFailureHandler(function(){ ep.vu = !next; render(); showToast('Erreur connexion'); }).setVu(ordre, next);
+      } else {
+        jsonp(APPS_SCRIPT_URL + '?action=setVu&ordre=' + ordre + '&vu=' + next, function(res){
+          if (!res || !res.ok){ ep.vu = !next; render(); showToast('Erreur'); }
+        });
+      }
     }
-
-    document.querySelectorAll('[data-status]').forEach(function(chip){
-      chip.addEventListener('click', function(){
-        document.querySelectorAll('[data-status]').forEach(function(c){ c.classList.remove('active'); });
-        chip.classList.add('active');
-        statusFilter = chip.getAttribute('data-status');
-        render();
-      });
-    });
-
-    /*document.getElementById('search').addEventListener('input', function(e){
-      searchTerm = e.target.value;
-      render();
-    });*/
 
     function findCurrentOrdre(){
       if (!EPISODES.length) return null;
@@ -604,16 +622,15 @@
     function scrollToCurrent(){
       var ordre = findCurrentOrdre();
       if (ordre == null) return;
-      
       var container = document.querySelector('.list');
       var row = container ? container.querySelector('.row[data-ordre="' + ordre + '"]') : null;
       
       if (!row){
-        statusFilter = 'tous'; universeFilter = 'tous'; searchTerm = '';
-        document.getElementById('search').value = '';
+        statusFilter = 'tous'; universeFilter = 'tous'; genreFilter = 'tous';
         document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
-        document.querySelector('.filter-chip[data-status="tous"]').classList.add('active');
-        var tousUnivers = document.querySelector('.filter-chip[data-univers="tous"]');
+        document.querySelector('[data-status="tous"]').classList.add('active');
+        document.querySelector('[data-genre="tous"]').classList.add('active');
+        var tousUnivers = document.querySelector('[data-univers="tous"]');
         if (tousUnivers) tousUnivers.classList.add('active');
         render();
         container = document.querySelector('.list');
