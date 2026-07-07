@@ -166,7 +166,7 @@
       min-width:160px;
       backdrop-filter: blur(4px);
     }
-    .search::placeholder{color:var(--muted);}
+    /*.search::placeholder{color:var(--muted);}*/
 
     main{
       flex: 1;
@@ -327,7 +327,7 @@
         font-weight:600;
         color:var(--bone);
       }
-      .search{margin-left: 0; width: 100%;}
+      /*.search{margin-left: 0; width: 100%;}*/
     }
 
     /* Desktop */
@@ -355,7 +355,7 @@
         <div class="filter-chip" data-status="vus"><i class="bi bi-check2-all"></i> VUS</div>
       </div>
       <button class="bulk-btn" id="continueBtn"><i class="bi bi-play-fill"></i> Prochain</button>
-      <input class="search" id="search" placeholder="Chercher... S04, E07" />
+      <!--<input class="search" id="search" placeholder="Chercher... S04, E07" />-->
     </div>
   </div>
 
@@ -587,10 +587,10 @@
       });
     });
 
-    document.getElementById('search').addEventListener('input', function(e){
+    /*document.getElementById('search').addEventListener('input', function(e){
       searchTerm = e.target.value;
       render();
-    });
+    });*/
 
     function findCurrentOrdre(){
       if (!EPISODES.length) return null;
