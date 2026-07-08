@@ -273,7 +273,19 @@
     /* Bouton "Tous" mobile : masqué sur desktop, visible en mobile seulement si un filtre est actif */
     #resetFiltersBtnMobile {
       display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      border: 1px dashed var(--rust);
+      color: var(--bone);
+      background: rgba(178, 58, 44, 0.15);
+      font-weight: 600;
+      border-radius: 3px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: .15s;
     }
+    #resetFiltersBtnMobile:hover { background: rgba(178, 58, 44, 0.3); }
     @media (max-width:900px){
       #resetFiltersBtnMobile.show { display: inline-flex; }
     }
@@ -429,7 +441,7 @@
       </div>
       <div class="top-actions">
         <button class="bulk-btn" id="toggleFilterBtn" title="Filtrer"><i class="bi bi-sliders"></i></button>
-        <button class="bulk-btn" id="resetFiltersBtnMobile" title="Réinitialiser les filtres"><i class="bi bi-arrow-counterclockwise"></i> Tous</button>
+        <button id="resetFiltersBtnMobile" title="Réinitialiser les filtres"><i class="bi bi-arrow-counterclockwise"></i> Tous</button>
         <button class="bulk-btn" id="continueBtn"><i class="bi bi-play-fill"></i> Prochain</button>
       </div>
     </div>
@@ -539,24 +551,43 @@
       document.getElementById('meterLabel').textContent = vus + ' / ' + total + ' · ' + pct + '%';
     }
 
-    function buildUniverseFilters(){
-      var el = document.getElementById('universeFilters');
-      var uniqueUniverses = [];
-      var universeToSigle = {};
+    var ALL_UNIVERSES = [];
 
+    function computeUniverseMeta(){
+      var universeToSigle = {};
+      ALL_UNIVERSES = [];
       EPISODES.forEach(function(e) {
-        if(e.univers && !uniqueUniverses.includes(e.univers)) {
-          uniqueUniverses.push(e.univers);
+        if(e.univers && !ALL_UNIVERSES.includes(e.univers)) {
+          ALL_UNIVERSES.push(e.univers);
           universeToSigle[e.univers] = e.sigle || '';
         }
       });
-
-      uniqueUniverses.forEach(function(u, idx) {
+      ALL_UNIVERSES.forEach(function(u, idx) {
         UNIVERSE_COLOR[u] = PALETTE[idx % PALETTE.length];
         UNIVERSE_SHORT[u] = generateShortName(u, universeToSigle[u]);
       });
+    }
 
-      el.innerHTML = uniqueUniverses.map(function(u){
+    function buildUniverseFilters(){
+      var el = document.getElementById('universeFilters');
+
+      // Ne garder que les séries qui ont au moins un épisode correspondant au genre et au statut sélectionnés
+      var visibleUniverses = ALL_UNIVERSES.filter(function(u){
+        return EPISODES.some(function(e){
+          if (e.univers !== u) return false;
+          if (genreFilter !== 'tous' && e.genre !== genreFilter) return false;
+          if (statusFilter === 'voir' && e.vu) return false;
+          if (statusFilter === 'vus' && !e.vu) return false;
+          return true;
+        });
+      });
+
+      // Si la série actuellement sélectionnée n'est plus pertinente pour ce genre, on revient à "tous"
+      if (universeFilter !== 'tous' && !visibleUniverses.includes(universeFilter)){
+        universeFilter = 'tous';
+      }
+
+      el.innerHTML = visibleUniverses.map(function(u){
         var label = UNIVERSE_SHORT[u];
         var activeClass = (u === universeFilter) ? ' active' : '';
         var colorStyle = 'style="color:' + UNIVERSE_COLOR[u] + '"';
@@ -586,6 +617,7 @@
       genreFilter = 'tous';
       universeFilter = 'tous';
       document.querySelectorAll('.filter-chip[data-status], .filter-chip[data-genre], .filter-chip[data-univers]').forEach(function(c){ c.classList.remove('active'); });
+      buildUniverseFilters();
       render();
       updateResetVisibility();
       document.getElementById('sidebar').classList.remove('open');
@@ -604,6 +636,7 @@
         document.querySelectorAll('[data-genre]').forEach(function(c){ c.classList.remove('active'); });
         genreFilter = wasActive ? 'tous' : chip.getAttribute('data-genre');
         if (!wasActive) chip.classList.add('active');
+        buildUniverseFilters();
         render();
         updateResetVisibility();
         document.getElementById('sidebar').classList.remove('open');
@@ -616,6 +649,7 @@
         document.querySelectorAll('[data-status]').forEach(function(c){ c.classList.remove('active'); });
         statusFilter = wasActive ? 'tous' : chip.getAttribute('data-status');
         if (!wasActive) chip.classList.add('active');
+        buildUniverseFilters();
         render();
         updateResetVisibility();
         document.getElementById('sidebar').classList.remove('open');
@@ -631,7 +665,7 @@
     }
 
     function searchUrlFor(ep){
-      var q = ep.univers + ' ' + ep.code + ' مترجم';
+      var q = ep.univers + ' ' + ep.code + ' Egydead';
       return 'https://www.google.com/search?q=' + encodeURIComponent(q);
     }
 
@@ -762,6 +796,7 @@
 
     remoteGetEpisodes(function(data){
       EPISODES = data || [];
+      computeUniverseMeta();
       buildUniverseFilters();
       render();
       setTimeout(scrollToCurrent, 350);
