@@ -137,6 +137,32 @@
       flex-direction: column;
       gap: 20px;
       overflow-y: auto;
+
+      /* Scrollbar élégante (Firefox) */
+      scrollbar-width: thin;
+      scrollbar-color: rgba(178, 58, 44, 0.35) transparent;
+    }
+
+    /* Scrollbar élégante (Chrome/Edge/Safari) — discrète au repos, dense au survol, sans flèches */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 6px 0;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(178, 58, 44, 0.25);
+      border-radius: 10px;
+      transition: background .2s ease;
+    }
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(178, 58, 44, 0.9);
+    }
+    .sidebar::-webkit-scrollbar-button {
+      display: none;
+      width: 0;
+      height: 0;
     }
 
     .filter-group {
@@ -158,8 +184,25 @@
 
     .chipset-vertical {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      flex-wrap: wrap;
       gap: 5px;
+    }
+    .chipset-vertical .filter-chip {
+      flex: 1;
+      justify-content: center;
+    }
+
+    .chipset-stacked {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .chipset-stacked .filter-chip {
+      flex: 1 1 auto;
+      justify-content: center;
+      width: auto;
     }
 
     .filter-chip {
@@ -176,6 +219,8 @@
       align-items: center;
       gap: 8px;
       font-weight: 500;
+      width: auto;
+      align-self: flex-start;
     }
     .filter-chip:hover { background: rgba(255,255,255,0.05); color: var(--bone); }
     .filter-chip.active {
@@ -185,7 +230,19 @@
     }
 
     .filter-chip[data-univers].active { border-color: currentColor; background: rgba(255,255,255,0.08); }
-    .filter-chip[data-univers="tous"].active { border-color: var(--bone); }
+
+    .reset-all-chip {
+      justify-content: center;
+      border-style: dashed;
+      border-color: var(--rust);
+      color: var(--bone);
+      background: rgba(178, 58, 44, 0.15);
+      font-weight: 600;
+      width: 100%;
+      align-self: stretch;
+      order: -1;
+    }
+    .reset-all-chip:hover { background: rgba(178, 58, 44, 0.3); color: var(--bone); }
 
     .bulk-btn{
       font-size:12px;
@@ -213,6 +270,14 @@
     }
     #toggleFilterBtn:hover { background: var(--panel-2); }
 
+    /* Bouton "Tous" mobile : masqué sur desktop, visible en mobile seulement si un filtre est actif */
+    #resetFiltersBtnMobile {
+      display: none;
+    }
+    @media (max-width:900px){
+      #resetFiltersBtnMobile.show { display: inline-flex; }
+    }
+
     /* Zone de liste */
     .content-area {
       flex: 1;
@@ -227,9 +292,33 @@
       border-radius:4px;
       overflow-y:auto; 
       flex: 1;
-      scrollbar-width: none; 
+
+      /* Scrollbar élégante (Firefox) */
+      scrollbar-width: thin;
+      scrollbar-color: rgba(201, 162, 39, 0.35) transparent;
     }
-    .list::-webkit-scrollbar { display: none; }
+
+    /* Scrollbar élégante (Chrome/Edge/Safari) — discrète au repos, dense au survol, sans flèches */
+    .list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .list::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 4px 0;
+    }
+    .list::-webkit-scrollbar-thumb {
+      background: rgba(201, 162, 39, 0.2);
+      border-radius: 10px;
+      transition: background .2s ease;
+    }
+    .list::-webkit-scrollbar-thumb:hover {
+      background: rgba(201, 162, 39, 0.85);
+    }
+    .list::-webkit-scrollbar-button {
+      display: none;
+      width: 0;
+      height: 0;
+    }
 
     .row{
       display:grid;
@@ -340,6 +429,7 @@
       </div>
       <div class="top-actions">
         <button class="bulk-btn" id="toggleFilterBtn" title="Filtrer"><i class="bi bi-sliders"></i></button>
+        <button class="bulk-btn" id="resetFiltersBtnMobile" title="Réinitialiser les filtres"><i class="bi bi-arrow-counterclockwise"></i> Tous</button>
         <button class="bulk-btn" id="continueBtn"><i class="bi bi-play-fill"></i> Prochain</button>
       </div>
     </div>
@@ -351,12 +441,16 @@
 
   <main>
     <div class="sidebar" id="sidebar">
-      
+
+      <!-- RESET GLOBAL : masqué tant qu'aucun filtre n'est actif -->
+      <div class="filter-chip reset-all-chip" id="resetFiltersBtn" style="display:none;">
+        <i class="bi bi-arrow-counterclockwise"></i> Tous
+      </div>
+
       <!-- FILTRE 1 : PROGRES -->
       <div class="filter-group">
         <div class="filter-group-title">Progression</div>
         <div class="chipset-vertical">
-          <div class="filter-chip active" data-status="tous"><i class="bi bi-collection"></i> Tous</div>
           <div class="filter-chip" data-status="voir"><i class="bi bi-eye"></i> À voir</div>
           <div class="filter-chip" data-status="vus"><i class="bi bi-check2-all"></i> Vus</div>
         </div>
@@ -366,7 +460,6 @@
       <div class="filter-group">
         <div class="filter-group-title">Genre</div>
         <div class="chipset-vertical" id="genreFilters">
-          <div class="filter-chip active" data-genre="tous"><i class="bi bi-tag"></i> Tous</div>
           <div class="filter-chip" data-genre="TVS"><i class="bi bi-tv"></i> TVS</div>
           <div class="filter-chip" data-genre="WBS"><i class="bi bi-globe"></i> WBS</div>
         </div>
@@ -375,7 +468,7 @@
       <!-- FILTRE 3 : SÉRIE -->
       <div class="filter-group">
         <div class="filter-group-title">Séries</div>
-        <div class="chipset-vertical" id="universeFilters"></div>
+        <div class="chipset-stacked" id="universeFilters"></div>
       </div>
 
     </div>
@@ -463,14 +556,11 @@
         UNIVERSE_SHORT[u] = generateShortName(u, universeToSigle[u]);
       });
 
-      var list = ['tous'].concat(uniqueUniverses);
-      
-      el.innerHTML = list.map(function(u){
-        var label = u === 'tous' ? '<i class="bi bi-grid-3x3-gap"></i> TOUS' : UNIVERSE_SHORT[u];
-        var activeClass = (u === 'tous' && universeFilter === 'tous') ? ' active' : '';
-        var activeClass2 = (u === universeFilter && u !== 'tous') ? ' active' : '';
-        var colorStyle = u !== 'tous' ? 'style="color:' + UNIVERSE_COLOR[u] + '"' : '';
-        return '<div class="filter-chip' + activeClass + activeClass2 + '" data-univers="' + u + '" ' + colorStyle + '>' + label + '</div>';
+      el.innerHTML = uniqueUniverses.map(function(u){
+        var label = UNIVERSE_SHORT[u];
+        var activeClass = (u === universeFilter) ? ' active' : '';
+        var colorStyle = 'style="color:' + UNIVERSE_COLOR[u] + '"';
+        return '<div class="filter-chip' + activeClass + '" data-univers="' + u + '" ' + colorStyle + '>' + label + '</div>';
       }).join('');
 
       el.querySelectorAll('.filter-chip').forEach(function(chip){
@@ -479,10 +569,30 @@
           chip.classList.add('active');
           universeFilter = chip.getAttribute('data-univers');
           render();
+          updateResetVisibility();
           document.getElementById('sidebar').classList.remove('open');
         });
       });
     }
+
+    function updateResetVisibility(){
+      var anyActive = statusFilter !== 'tous' || genreFilter !== 'tous' || universeFilter !== 'tous';
+      document.getElementById('resetFiltersBtn').style.display = anyActive ? 'flex' : 'none';
+      document.getElementById('resetFiltersBtnMobile').classList.toggle('show', anyActive);
+    }
+
+    function resetAllFilters(){
+      statusFilter = 'tous';
+      genreFilter = 'tous';
+      universeFilter = 'tous';
+      document.querySelectorAll('.filter-chip[data-status], .filter-chip[data-genre], .filter-chip[data-univers]').forEach(function(c){ c.classList.remove('active'); });
+      render();
+      updateResetVisibility();
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    document.getElementById('resetFiltersBtn').addEventListener('click', resetAllFilters);
+    document.getElementById('resetFiltersBtnMobile').addEventListener('click', resetAllFilters);
 
     document.getElementById('toggleFilterBtn').addEventListener('click', function(){
       document.getElementById('sidebar').classList.toggle('open');
@@ -490,20 +600,24 @@
 
     document.querySelectorAll('[data-genre]').forEach(function(chip){
       chip.addEventListener('click', function(){
+        var wasActive = chip.classList.contains('active');
         document.querySelectorAll('[data-genre]').forEach(function(c){ c.classList.remove('active'); });
-        chip.classList.add('active');
-        genreFilter = chip.getAttribute('data-genre');
+        genreFilter = wasActive ? 'tous' : chip.getAttribute('data-genre');
+        if (!wasActive) chip.classList.add('active');
         render();
+        updateResetVisibility();
         document.getElementById('sidebar').classList.remove('open');
       });
     });
 
     document.querySelectorAll('[data-status]').forEach(function(chip){
       chip.addEventListener('click', function(){
+        var wasActive = chip.classList.contains('active');
         document.querySelectorAll('[data-status]').forEach(function(c){ c.classList.remove('active'); });
-        chip.classList.add('active');
-        statusFilter = chip.getAttribute('data-status');
+        statusFilter = wasActive ? 'tous' : chip.getAttribute('data-status');
+        if (!wasActive) chip.classList.add('active');
         render();
+        updateResetVisibility();
         document.getElementById('sidebar').classList.remove('open');
       });
     });
@@ -628,10 +742,7 @@
       if (!row){
         statusFilter = 'tous'; universeFilter = 'tous'; genreFilter = 'tous';
         document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
-        document.querySelector('[data-status="tous"]').classList.add('active');
-        document.querySelector('[data-genre="tous"]').classList.add('active');
-        var tousUnivers = document.querySelector('[data-univers="tous"]');
-        if (tousUnivers) tousUnivers.classList.add('active');
+        updateResetVisibility();
         render();
         container = document.querySelector('.list');
         row = container ? container.querySelector('.row[data-ordre="' + ordre + '"]') : null;
