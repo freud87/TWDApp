@@ -1,5 +1,6 @@
-const CACHE_NAME = 'twd-journal-v1';
-const SHELL = [
+// sw.js - Service Worker pour la PWA
+const CACHE_NAME = 'twd-app-v2';
+const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
@@ -8,38 +9,46 @@ const SHELL = [
   './icon-maskable-512.png'
 ];
 
-self.addEventListener('install', function (event) {
+// Installer le service worker et mettre en cache les assets
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
-      return cache.addAll(SHELL);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Cache ouvert');
+        return cache.addAll(STATIC_ASSETS);
+      })
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-self.addEventListener('activate', function (event) {
+// Activer et nettoyer les anciens caches
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(function (keys) {
+    caches.keys().then(cacheNames => {
       return Promise.all(
-        keys.filter(function (k) { return k !== CACHE_NAME; })
-            .map(function (k) { return caches.delete(k); })
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Suppression de l\'ancien cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', function (event) {
-  const url = event.request.url;
-
-  // Ne jamais mettre en cache les appels vers Apps Script (données live du Sheet)
-  if (url.indexOf('script.google.com') !== -1 || url.indexOf('googleusercontent.com') !== -1) {
-    return; // laisse passer directement au réseau
-  }
-
+// Intercepter les requêtes et servir depuis le cache
+self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(function (cached) {
-      return cached || fetch(event.request);
-    })
+    caches.match(event.request)
+      .then(response => {
+        // Retourner depuis le cache ou faire la requête réseau
+        return response || fetch(event.request).catch(() => {
+          // Si la requête réseau échoue, retourner une page d'erreur offline
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+        });
+      })
   );
 });
