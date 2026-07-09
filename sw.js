@@ -6,7 +6,8 @@ const STATIC_ASSETS = [
   '/TWDApp/sw.js',
   '/TWDApp/icon-192.png',
   '/TWDApp/icon-512.png',
-  '/TWDApp/icon-maskable-512.png'
+  '/TWDApp/icon-maskable-512.png',
+  '/TWDApp/screenshot-mobile.png'
 ];
 
 // Installation
