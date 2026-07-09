@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TWD App</title></title>
   <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -27,6 +26,9 @@
       --moss:#5f7a4c;
       --moss-dim:#3d4f32;
       --slate:#5c6b73;
+      --sync-ok:#5f7a4c;
+      --sync-error:#b23a2c;
+      --sync-syncing:#c9a227;
     }
     *{box-sizing:border-box;}
     html,body{margin:0;padding:0;height:100%;overflow:hidden;}
@@ -56,7 +58,7 @@
       padding:14px 20px 10px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
     }
     .top-header {
       display: flex;
@@ -68,6 +70,16 @@
       display: flex;
       gap: 8px;
       align-items: center;
+    }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .brand-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .brand h1{
       font-weight:700;
@@ -83,6 +95,35 @@
       font-size:11px;
       letter-spacing:.05em;
       font-weight: 500;
+      display: block;
+    }
+
+    /* Indicateur de synchro plus petit */
+    .sync-dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--sync-ok);
+      transition: background 0.3s ease, transform 0.3s ease;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .sync-dot.syncing {
+      background: var(--sync-syncing);
+      animation: pulse-dot 0.8s ease-in-out infinite;
+    }
+    .sync-dot.error {
+      background: var(--sync-error);
+    }
+    .sync-dot.ok {
+      background: var(--sync-ok);
+    }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.6; }
     }
 
     .meter-container {
@@ -256,7 +297,6 @@
     }
     .bulk-btn:hover{ background:#d5d1c5; border-color:#d5d1c5; }
 
-    /* Bouton Reprendre : rouge et blanc */
     #firstUnseenBtn {
       background: var(--rust);
       border-color: var(--rust);
@@ -385,6 +425,14 @@
       100%{box-shadow:0 0 0 2px var(--rust) inset, 0 0 6px rgba(178,58,44,.3);}
     }
 
+    .row.synced-update {
+      animation: highlight 0.6s ease;
+    }
+    @keyframes highlight {
+      0% { background: rgba(90, 170, 90, 0.3); }
+      100% { background: transparent; }
+    }
+
     .empty{
       text-align:center; color:var(--muted); padding:60px 0; font-size:13px; font-weight: 500;
     }
@@ -427,7 +475,6 @@
       }
       .row-btn { width: 40px; }
 
-      /* Mobile : boutons avec seulement l'icône */
       .bulk-btn .btn-label {
         display: none;
       }
@@ -446,12 +493,15 @@
   <div class="top">
     <div class="top-header">
       <div class="brand">
-        <h1>Journal de <span>survie</span></h1>
+        <div class="brand-top">
+          <h1>Journal de <span>survie</span></h1>
+          <span class="sync-dot ok" id="syncDot" title="Synchronisation"></span>
+        </div>
         <small id="subtitle">TWD UNIVERSE — SUIVI CHRONOLOGIQUE</small>
       </div>
       <div class="top-actions">
         <button class="bulk-btn" id="toggleFilterBtn" title="Filtrer"><i class="bi bi-sliders"></i></button>
-        <button id="resetFiltersBtnMobile" title="Réinitialiser les filtres"><i class="bi bi-arrow-counterclockwise"></i></button>
+        <button id="resetFiltersBtnMobile" title="Réinitialiser les filtres"><i class="bi bi-arrow-counterclockwise"></i> Tous</button>
         <button class="bulk-btn" id="continueBtn"><i class="bi bi-play-fill"></i> <span class="btn-label">Prochain</span></button>
         <button class="bulk-btn" id="firstUnseenBtn" style="display:none;"><i class="bi bi-chevron-double-up"></i> <span class="btn-label" id="firstUnseenLabel">Reprendre</span></button>
       </div>
@@ -498,6 +548,130 @@
     var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyj83OXLlan3tr04LNbl16BAyztHsiDlu9FufaFxlYWk8RNyFe7BqgrDPNayC9c-In4Gw/exec';
     var usingGAS = !!(typeof google !== 'undefined' && google.script && google.script.run);
 
+    // ===== SYSTÈME DE SYNCHRONISATION SILENCIEUSE =====
+    var SYNC_KEY = 'twd_sync_data';
+    var LAST_UPDATE_KEY = 'twd_last_update';
+    var SYNC_INTERVAL = 30000; // 30 secondes
+
+    var syncDot = document.getElementById('syncDot');
+
+    function setSyncStatus(status) {
+      syncDot.className = 'sync-dot ' + status;
+    }
+
+    function getEpisodesHash() {
+      if (!EPISODES.length) return '';
+      return EPISODES.map(function(e) { return e.ordre + ':' + (e.vu ? '1' : '0'); }).join('|');
+    }
+
+    function saveLocalState() {
+      try {
+        var data = {
+          hash: getEpisodesHash(),
+          episodes: EPISODES.map(function(e) { return { ordre: e.ordre, vu: e.vu }; }),
+          timestamp: Date.now()
+        };
+        localStorage.setItem(SYNC_KEY, JSON.stringify(data));
+        localStorage.setItem(LAST_UPDATE_KEY, String(Date.now()));
+      } catch(e) { /* ignore */ }
+    }
+
+    function checkLocalSync() {
+      try {
+        var stored = localStorage.getItem(SYNC_KEY);
+        if (!stored) return false;
+        var data = JSON.parse(stored);
+        var currentHash = getEpisodesHash();
+        if (data.hash && data.hash !== currentHash && data.episodes) {
+          var changed = false;
+          data.episodes.forEach(function(remoteEp) {
+            var localEp = EPISODES.find(function(e) { return e.ordre === remoteEp.ordre; });
+            if (localEp && localEp.vu !== remoteEp.vu) {
+              localEp.vu = remoteEp.vu;
+              changed = true;
+            }
+          });
+          if (changed) {
+            saveLocalState();
+            render();
+            setTimeout(function() {
+              document.querySelectorAll('.row').forEach(function(row) {
+                row.classList.add('synced-update');
+                setTimeout(function() { row.classList.remove('synced-update'); }, 600);
+              });
+            }, 100);
+            showToast('Mise à jour depuis un autre appareil');
+            return true;
+          }
+        }
+        return false;
+      } catch(e) { return false; }
+    }
+
+    function syncWithServer() {
+      setSyncStatus('syncing');
+      
+      var callback = function(data) {
+        var remoteEpisodes = data || [];
+        if (!remoteEpisodes.length) {
+          setSyncStatus('error');
+          return;
+        }
+
+        var changed = false;
+        remoteEpisodes.forEach(function(remoteEp) {
+          var localEp = EPISODES.find(function(e) { return e.ordre === remoteEp.ordre; });
+          if (localEp && localEp.vu !== remoteEp.vu) {
+            localEp.vu = remoteEp.vu;
+            changed = true;
+          }
+        });
+
+        if (changed) {
+          saveLocalState();
+          render();
+          setTimeout(function() {
+            document.querySelectorAll('.row').forEach(function(row) {
+              row.classList.add('synced-update');
+              setTimeout(function() { row.classList.remove('synced-update'); }, 600);
+            });
+          }, 100);
+          showToast('Mise à jour depuis le serveur');
+          setSyncStatus('ok');
+        } else {
+          setSyncStatus('ok');
+        }
+      };
+
+      if (usingGAS) {
+        google.script.run
+          .withSuccessHandler(callback)
+          .withFailureHandler(function() {
+            setSyncStatus('error');
+          })
+          .getEpisodes();
+      } else {
+        jsonp(APPS_SCRIPT_URL + '?action=episodes', function(res) {
+          if (res && res.ok) {
+            callback(res.data);
+          } else {
+            setSyncStatus('error');
+          }
+        });
+      }
+    }
+
+    function syncAll() {
+      var localChanged = checkLocalSync();
+      if (!localChanged) {
+        syncWithServer();
+      } else {
+        syncWithServer();
+      }
+    }
+
+    // ===== FIN SYSTÈME DE SYNCHRONISATION =====
+
     function jsonp(url, cb){
       var cbName = 'jsonp_cb_' + Math.random().toString(36).slice(2);
       var s = document.createElement('script');
@@ -542,7 +716,7 @@
     function showToast(msg){
       var t = document.getElementById('toast');
       t.textContent = msg; t.classList.add('show');
-      setTimeout(function(){ t.classList.remove('show'); }, 1800);
+      setTimeout(function(){ t.classList.remove('show'); }, 2000);
     }
 
     function updateMeter(){
@@ -664,7 +838,7 @@
     }
 
     function searchUrlFor(ep){
-      var q = ep.univers + ' ' + ep.code + ' مترجم';
+      var q = ep.univers + ' ' + ep.code + ' Egydead';
       return 'https://www.google.com/search?q=' + encodeURIComponent(q);
     }
 
@@ -740,7 +914,6 @@
       if (newContainer) { newContainer.scrollTop = savedScrollTop; }
       updateMeter();
 
-      // Gestion du bouton "Reprendre" : affiche le sigle + numéro du premier épisode non-vu
       var firstUnseenBtn = document.getElementById('firstUnseenBtn');
       var firstUnseenLabel = document.getElementById('firstUnseenLabel');
       var firstUnseen = EPISODES.filter(function(e) { return !e.vu; }).sort(function(a,b){ return a.ordre - b.ordre; })[0];
@@ -752,6 +925,8 @@
       } else {
         firstUnseenBtn.style.display = 'none';
       }
+
+      saveLocalState();
     }
 
     function toggleEpisode(ordre){
@@ -759,14 +934,19 @@
       if (!ep) return;
       var next = !ep.vu;
       ep.vu = next;
+
       render();
+      saveLocalState();
+
       if (usingGAS){
         google.script.run.withSuccessHandler(function(res){
           if (!res || !res.ok){ ep.vu = !next; render(); showToast('Erreur serveur'); }
+          else { saveLocalState(); }
         }).withFailureHandler(function(){ ep.vu = !next; render(); showToast('Erreur connexion'); }).setVu(ordre, next);
       } else {
         jsonp(APPS_SCRIPT_URL + '?action=setVu&ordre=' + ordre + '&vu=' + next, function(res){
           if (!res || !res.ok){ ep.vu = !next; render(); showToast('Erreur'); }
+          else { saveLocalState(); }
         });
       }
     }
@@ -840,7 +1020,24 @@
       computeUniverseMeta();
       buildUniverseFilters();
       render();
+      saveLocalState();
       setTimeout(scrollToCurrent, 350);
+
+      setSyncStatus('ok');
+
+      setTimeout(function() {
+        syncAll();
+      }, 2000);
+
+      setInterval(function() {
+        syncAll();
+      }, SYNC_INTERVAL);
+
+      window.addEventListener('storage', function(e) {
+        if (e.key === SYNC_KEY || e.key === LAST_UPDATE_KEY) {
+          checkLocalSync();
+        }
+      });
     });
   </script>
 </body>
