@@ -2,35 +2,49 @@
   "name": "Journal de Survie TWD",
   "short_name": "TWD App",
   "description": "Suivi chronologique de l'univers The Walking Dead",
-  "start_url": "./index.html",
+  "start_url": "/TWDApp/index.html",
   "display": "standalone",
   "background_color": "#15140f",
   "theme_color": "#15140f",
   "orientation": "portrait-primary",
+  "scope": "/TWDApp/",
+  "lang": "fr",
+  "categories": ["entertainment", "tv"],
+  "dir": "ltr",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/TWDApp/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
+      "src": "/TWDApp/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/TWDApp/icon-maskable-512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-maskable-512.png",
-      "sizes": "512x512",
+      "src": "/TWDApp/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/TWDApp/screenshot-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "platform": "android",
+      "label": "Liste des épisodes"
+    }
+  ],
+  "display_override": ["standalone", "browser"]
 }
