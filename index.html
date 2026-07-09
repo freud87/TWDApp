@@ -1048,5 +1048,20 @@
       });
     });
   </script>
+  <!-- ===== ENREGISTREMENT DU SERVICE WORKER ===== -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js')
+          .then(function(registration) {
+            console.log('Service Worker enregistré avec succès:', registration);
+          })
+          .catch(function(error) {
+            console.log('Échec de l\'enregistrement du Service Worker:', error);
+          });
+      });
+    }
+  </script>
+  <!-- ===== FIN SERVICE WORKER ===== -->
 </body>
 </html>
