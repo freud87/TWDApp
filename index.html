@@ -1055,57 +1055,47 @@
       });
     });
   </script>
-  <!-- ===== ENREGISTREMENT DU SERVICE WORKER ===== -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js')
-          .then(function(registration) {
-            console.log('Service Worker enregistré avec succès:', registration);
-          })
-          .catch(function(error) {
-            console.log('Échec de l\'enregistrement du Service Worker:', error);
+  <!-- ===== ENREGISTREMENT SW AVEC FALLBACK ===== -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/TWDApp/sw.js', {
+        scope: '/TWDApp/'
+      })
+      .then(function(registration) {
+        console.log('[SW] Enregistré avec succès:', registration);
+        
+        // Vérifier les mises à jour
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('[SW] Nouvelle version disponible!');
+              // Proposer de rafraîchir la page
+              if (confirm('Une nouvelle version est disponible. Rafraîchir ?')) {
+                window.location.reload();
+              }
+            }
           });
+        });
+      })
+      .catch(function(error) {
+        console.log('[SW] Échec:', error);
       });
-    }
+    });
+  }
 
-    // Ajouter dans le script principal
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  
-  // Afficher un bouton d'installation
-  const installBtn = document.createElement('button');
-  installBtn.textContent = '📲 Installer l\'app';
-  installBtn.style.position = 'fixed';
-  installBtn.style.bottom = '20px';
-  installBtn.style.right = '20px';
-  installBtn.style.zIndex = '999';
-  installBtn.className = 'bulk-btn';
-  installBtn.id = 'installBtn';
-  
-  document.body.appendChild(installBtn);
-  
-  installBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const result = await deferredPrompt.userChoice;
-      if (result.outcome === 'accepted') {
-        console.log('App installée');
-      }
-      deferredPrompt = null;
-      installBtn.remove();
-    }
+  // Détecter si l'app est installée
+  window.addEventListener('appinstalled', () => {
+    console.log('PWA installée avec succès!');
+    // Vous pouvez afficher un message de bienvenue
   });
-});
 
-window.addEventListener('appinstalled', () => {
-  console.log('PWA installée avec succès!');
-  document.getElementById('installBtn')?.remove();
-});
-  </script>
-  <!-- ===== FIN SERVICE WORKER ===== -->
+  // Pour déboguer sur mobile
+  if (window.navigator.standalone) {
+    console.log('L\'app est ouverte en mode standalone (iOS)');
+    document.body.classList.add('pwa-mode');
+  }
+</script>
 </body>
 </html>
