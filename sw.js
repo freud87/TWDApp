@@ -1,34 +1,34 @@
-// sw.js - Service Worker pour la PWA
-const CACHE_NAME = 'twd-app-v2';
+const CACHE_NAME = 'twd-app-v3';
 const STATIC_ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-maskable-512.png'
+  '/TWDApp/',
+  '/TWDApp/index.html',
+  '/TWDApp/manifest.json',
+  '/TWDApp/sw.js',
+  '/TWDApp/icon-192.png',
+  '/TWDApp/icon-512.png',
+  '/TWDApp/icon-maskable-512.png'
 ];
 
-// Installer le service worker et mettre en cache les assets
+// Installation
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Cache ouvert');
+        console.log('[SW] Cache ouvert');
         return cache.addAll(STATIC_ASSETS);
       })
       .then(() => self.skipWaiting())
   );
 });
 
-// Activer et nettoyer les anciens caches
+// Activation
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Suppression de l\'ancien cache:', cacheName);
+            console.log('[SW] Suppression:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -37,18 +37,26 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Intercepter les requêtes et servir depuis le cache
+// Stratégie de cache : Stale-While-Revalidate
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        // Retourner depuis le cache ou faire la requête réseau
-        return response || fetch(event.request).catch(() => {
-          // Si la requête réseau échoue, retourner une page d'erreur offline
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-        });
+      .then(cachedResponse => {
+        const fetchPromise = fetch(event.request)
+          .then(networkResponse => {
+            // Mettre en cache la nouvelle version
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, networkResponse.clone());
+            });
+            return networkResponse;
+          })
+          .catch(() => {
+            // Si le réseau échoue, retourner la réponse en cache
+            return cachedResponse;
+          });
+
+        // Retourner la réponse en cache ou la réponse réseau
+        return cachedResponse || fetchPromise;
       })
   );
 });
