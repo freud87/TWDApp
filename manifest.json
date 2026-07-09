@@ -1,19 +1,24 @@
 {
-  "name": "Journal de survie — TWD Universe",
-  "short_name": "Journal TWD",
-  "description": "Suivi chronologique des épisodes de l'univers The Walking Dead",
+  "name": "Journal de Survie TWD",
+  "short_name": "TWD App",
+  "description": "Suivi chronologique de l'univers The Walking Dead",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
   "background_color": "#15140f",
   "theme_color": "#15140f",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon-512.png",
